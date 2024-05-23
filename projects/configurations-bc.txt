@@ -1,0 +1,37 @@
+server.servlet.context-path=/api
+server.max-http-header-size=20KB
+
+# Swagger
+springdoc.swagger-ui.path=docs
+swagger.server.url=/api
+
+# Logs
+spring.application.name=CONFIGURATIONS-BC
+spring.main.banner-mode=OFF
+logging.level.com.robinfood=TRACE
+
+# WebClient
+web.client.timeout=10000
+web.client.buffer.size=2048000
+
+# DataSource
+spring.datasource.jdbc-url=jdbc:mysql://main.db.muydev.com:3306/configurations?enabledTLSProtocols=TLSv1.2
+spring.datasource.username=configurations_bc
+spring.datasource.password=m3TSRn2bgqZaSWZ5
+
+# Security
+jwt.token.aud=service,public,internal
+jwt.token.secret=gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+jwt.token.mod=configurations_bc
+
+# Auth
+token.subtract.ttl.in.seconds=10
+token.redis.key=configurations:redis:token:key:
+token.redis.scope=token
+
+# Redis
+redis.host=rcache.vxyisi.ng.0001.use2.cache.amazonaws.com
+redis.port=6379
+
+url.base.logo=https://s3.us-east-2.amazonaws.com/assets.muydev.com/menu/brands/
+url.base.logo.channel=https://s3.amazonaws.com/assets.delivery.muydev.com/public-images/

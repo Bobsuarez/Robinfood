@@ -1,0 +1,134 @@
+{
+  "executionRoleArn": "arn:aws:iam::824759482132:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/store-or-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "CODE_BRANCH"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "store-or-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/store-or:IMAGE_TAG",
+      "environment": [
+        {
+          "name": "VIRTUAL_HOST",
+          "value": "CODE_BRANCH.store-or.muydev.com"
+        }
+      ],
+      "name": "store-or"
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/store-or-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "store-or-logstash"
+        }
+      },
+      "portMappings": [
+        {
+          "containerPort": 5044
+        }
+      ],
+      "environment": [
+        {
+          "name": "ES_HOSTS",
+          "value": "https://observability-372031.es.us-east-1.aws.found.io:9243"
+        },
+        {
+          "name": "xpack.monitoring.enabled",
+          "value": "false"
+        },
+        {
+          "name": "LOG_INDEX",
+          "value": "logs-cai-dev-storeor-%{+YYYY.MM.dd}"
+        },
+        {
+          "name": "ES_USER",
+          "value": "USERNAME"
+        },
+        {
+          "name": "ES_PASSWORD",
+          "value": "PASSWORD"
+        },
+        {
+          "name": "ILM_POLICY",
+          "value": "POLICY_NAME"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/logstash:7.16.3-v1",
+      "essential": true,
+      "name": "logstash",
+      "healthCheck": {
+        "retries": 10,
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:9600/ || exit 1"
+        ],
+        "timeout": 5,
+        "interval": 30,
+        "startPeriod": 60
+      }
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/store-or-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "store-or-filebeat"
+        }
+      },
+      "environment": [
+        {
+          "name": "LOGSTASH_HOSTS",
+          "value": "localhost:5044"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "store-or-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/filebeat:7.16.3-v1",
+      "essential": true,
+      "name": "filebeat",
+      "dependsOn": [
+        {
+          "containerName": "logstash",
+          "condition": "HEALTHY"
+        }
+      ]
+    }
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "taskRoleArn": "arn:aws:iam::824759482132:role/store-or-role-dev",
+  "memory": "4096",
+  "family": "store-or",
+  "networkMode": "awsvpc",
+  "cpu": "2048",
+  "volumes": [
+    {
+      "name": "store-or-logs"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+CREATE TABLE `order_final_product_taxes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `order_id` int(10) unsigned NULL COMMENT 'Id de la orden (Relación virtual con -orders- DB ORDERS)',
+  `article_id` int(10) unsigned DEFAULT NULL COMMENT 'Determina la relación a menu.menu_promotion_articles',
+  `article_type_id` int(10) unsigned DEFAULT NULL COMMENT 'Determina la relación a sgi.final_product_size.',
+  `order_final_product_id` int(10) unsigned NOT NULL COMMENT 'Determina la relación a orders.order_final_product.',
+  `dic_tax_id` int(10) unsigned NOT NULL COMMENT 'Determina la relación con sgi.dic_taxes.',
+  `tax_value` decimal(13,4) NOT NULL COMMENT 'Determina el valor del impuesto.',
+  `family_tax_type_id` int(10) unsigned NOT NULL COMMENT 'Determina la relación con sgi.family_taxes. Dice si el impuesto es un porcentaje, fijo o de otro tipo.',
+  `tax_price` decimal(13,4) NOT NULL COMMENT 'Determina el monto calculado del impuesto.',
+  `tax_type_id` int(10) unsigned NULL COMMENT 'Id del tipo de impuesto (Relación virtual con tax_types DB taxes)',
+  `tax_type_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Nombre del tipo de impuesto (Relación virtual con tax_types DB taxes)',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `order_final_product_taxes_order_id_index` (`order_id`),
+  KEY `order_final_product_taxes_article_id` (`article_id`),
+  KEY `order_final_product_taxes_article_type_id` (`article_type_id`),
+  KEY `order_final_product_taxes_order_final_product_id_index` (`order_final_product_id`),
+  KEY `order_final_product_taxes_dic_tax_id_index` (`dic_tax_id`),
+  KEY `order_final_product_taxes_family_tax_type_id_index` (`family_tax_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

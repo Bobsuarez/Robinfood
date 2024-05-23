@@ -1,0 +1,67 @@
+service: order-billnumbergenerator-bc
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  stage: dev
+  runtime: java21
+  region: us-east-1
+  configValidationMode: error
+  deploymentBucket:
+    name: rf-prod-serverlessdeploymentbuck
+  environment:
+    URL_CONNECTOR_SIMBA: https://ordersimbaconnector-bc.rf-dev.com/
+    URL_DB: -- URL DB devops --
+    USERNAME_DB: -- User DB devops--
+    PASSWORD_DB: -- Password DB devops --
+    DRIVER_CLASS_NAME_DB: com.mysql.cj.jdbc.Driver
+    LOGIN_TIME_OUT_DB: 6
+    JWT_TOKEN_SECRET: -- Token Secret devops --
+    JWT_TOKEN_AUD: service
+    JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+    THIRD_PARTY_DOCUMENT_NUMBER: 222222222222
+    THIRD_PARTY_DOCUMENT_TYPE: 2
+    THIRD_PARTY_EMAIL: email@gmail.com
+    THIRD_PARTY_FULL_NAME: ""
+
+plugins:
+  - serverless-domain-manager
+  - serverless-deployment-bucket
+
+package:
+  artifact: target/order-billnumbergenerator-bc.jar
+  patterns:
+    - '!tmp/**'
+    - '!.git/**'
+    - '.DS_Store'
+    - 'target/classes/**'
+    - 'target/test-classes/**'
+    - 'target/site/**'
+    - 'META-INF/maven/**'
+    - 'META-INF/MANIFEST.MF'
+    - 'META-INF/DEPENDENCIES'
+    - 'lib/**'
+    - 'log4j.properties'
+    - 'logback.xml'
+
+functions:
+  sentMessageToSimbaConnector:
+    timeout: 15
+    snapStart: true
+    handler: com.robinfood.handlers.SendOrderToSimbaHandler
+    events:
+      - httpApi:
+          path: /v1/send-electronic-bill
+          method: post
+
+custom:
+  customDomain:
+    http:
+      domainName: orderbillnumbergenerator-bc.muy.com.co
+      basePath: ''
+      stage: ${self:provider.stage}
+      certificateName: '*.muy.com.co'
+      createRoute53Record: true
+      endpointType: 'regional'
+      securityPolicy: tls_1_2

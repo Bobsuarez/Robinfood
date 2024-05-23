@@ -1,0 +1,91 @@
+{
+  "executionRoleArn": "arn:aws:iam::824759482132:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/order-bc-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "CODE_BRANCH"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "environment": [
+        {
+          "name": "VIRTUAL_HOST",
+          "value": "CODE_BRANCH.order-bc.muydev.com"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "order-bc-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/order-bc:IMAGE_TAG",
+      "name": "order-bc"
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/order-bc-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "order-bc-filebeat"
+        }
+      },
+      "environment": [
+        {
+          "name": "LOGSTASH_HOSTS",
+          "value": "logstash.muydev.com:5044"
+        },
+        {
+          "name": "SQUAD",
+          "value": "SQUAD_NAME"
+        },
+        {
+          "name": "APP",
+          "value": "APP_NAME"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "value": "FILEBEAT_ENVIRONMENT"
+        },
+        {
+          "name": "PIPELINE",
+          "value": "ecs-pipeline"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "order-bc-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/filebeat:7.16.3-ssl",
+      "essential": false,
+      "memory": 64,
+      "name": "filebeat"
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::824759482132:role/order-bc-role-dev",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "memory": "2048",
+  "family": "order-bc",
+  "networkMode": "awsvpc",
+  "cpu": "1024",
+  "volumes": [
+    {
+      "name": "order-bc-logs"
+    }
+  ]
+}

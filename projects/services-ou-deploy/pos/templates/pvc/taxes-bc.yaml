@@ -1,0 +1,13 @@
+{{- if and .Values.taxesbc.persistence.enabled (not .Values.taxesbc.persistence.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "servicesou.taxesbc.fullname" . }}
+spec:
+  accessModes:
+    - {{ .Values.taxesbc.persistence.accessMode | quote }}
+  storageClassName: {{ .Values.taxesbc.persistence.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.taxesbc.persistence.size | quote }}
+{{- end -}}

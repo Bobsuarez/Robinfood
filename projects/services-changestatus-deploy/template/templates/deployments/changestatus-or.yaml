@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "changestatus.changestatusor.fullname" . }}
+  labels:
+    {{- include "changestatus.changestatusor.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.changestatusor.autoscaling.enabled }}
+  replicas: {{ .Values.changestatusor.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "changestatus.changestatusor.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.changestatusor.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "changestatus.changestatusor.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.changestatusor.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "changestatus.changestatusor.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.changestatusor.podSecurityContext | nindent 8 }}
+      containers:
+        - name: filebeat-sidecar
+          image: public.ecr.aws/d9e2y2w1/filebeat:7.16.3-arm
+          env:
+          {{- toYaml .Values.changestatusor.env | nindent 12 }}
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs/
+            - name: changestatus-filebeat-config
+              mountPath: /usr/share/filebeat/filebeat.yml
+              subPath: filebeat.yml
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.changestatusor.securityContext | nindent 12 }}
+          image: "{{ .Values.changestatusor.image.repository }}:{{ .Values.changestatusor.image.tag | default .Chart.AppVersion }}"
+          env:
+          {{- toYaml .Values.changestatusor.env | nindent 12 }}
+          imagePullPolicy: {{ .Values.changestatusor.image.pullPolicy }}
+          {{- if .Values.changestatusor.healthCheck.enabled }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: {{ .Values.changestatusor.healthCheck.path }}
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 240
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - '-c'
+                - "curl localhost:8080{{ .Values.changestatusor.healthCheck.path }}  | grep  status | grep UP"
+            failureThreshold: 3
+            initialDelaySeconds: 240
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.changestatusor.resources | nindent 12 }}
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs
+      volumes:
+        - name: changestatus-filebeat-config
+          configMap:
+            name: changestatus-filebeat-config
+            items:
+              - key: filebeat.yml
+                path: filebeat.yml
+        - name: logs
+        {{- if .Values.changestatusor.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.changestatusor.persistence.existingClaim | default (include "changestatus.changestatusor.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.changestatusor.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.changestatusor.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.changestatusor.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

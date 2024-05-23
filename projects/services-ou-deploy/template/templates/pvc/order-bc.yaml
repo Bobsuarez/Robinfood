@@ -1,0 +1,13 @@
+{{- if and .Values.orderbc.persistence.enabled (not .Values.orderbc.persistence.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "servicesou.orderbc.fullname" . }}
+spec:
+  accessModes:
+    - {{ .Values.orderbc.persistence.accessMode | quote }}
+  storageClassName: {{ .Values.orderbc.persistence.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.orderbc.persistence.size | quote }}
+{{- end -}}

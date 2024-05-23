@@ -1,0 +1,80 @@
+server.port=8070
+spring.application.name = orderBc
+
+#JWT Token
+jwt-token-prefix=Bearer\u0020
+jwt.token.secret=gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+#jwt-token-aud=internal
+jwt-token-aud=service
+jwt-token-mod=order_bc
+
+# Swagger
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=method
+springdoc.packagesToScan=com.robinfood.app.controllers
+
+#DB connection
+spring.datasource.initialization-mode=never
+spring.datasource.url=jdbc:mysql://ou-db-rw.muydev.com:3306/orders?zeroDateTimeBehavior=convertToNull&enabledTLSProtocols=TLSv1.2
+spring.datasource.username=orderer
+spring.datasource.password=t2mJHPSeiGb5ucqs
+
+
+#Hibernate Configuration
+
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+#Logging
+
+#Hibernate
+spring.jpa.database-platform=org.hibernate.dialect.MySQL5InnoDBDialect
+spring.jpa.hibernate.use-new-id-generator-mappings=false
+spring.jpa.hibernate.ddl-auto=none
+
+#Product
+product-images-url=https://s3.us-west-1.amazonaws.com/files-muy/photos/menus/elements/thumbnails/
+
+#User - Active Orders
+user.active-orders.diff-status=6,9
+user.active-orders.origin=2
+user.active-orders.hours=4
+user.history-orders.diff-status=9
+
+#ActiveMQ
+spring.activemq.broker-url=ssl://b-d8bb126e-a6c3-48ba-beab-2f19245e4ea3-1.mq.us-east-2.amazonaws.com:61617
+spring.activemq.in-memory=false
+spring.activemq.user=order-bc
+spring.activemq.password=jj0hHbUViAt43eim
+activemq.orders-created-delay=200
+
+#ActiveMQ - Topics - Queue
+activemq.paid-orders.client_id=order-bc
+activemq.orders-created.topic=Rf.All.Order.OrderCreated.VirtualTopic
+activemq.orders-notifications-change.queue=Rf.All.Notifications.OrderStatusChanged.MiddleLayer.Queue
+activemq.orders-status-changed.topic=Rf.All.Order.OrderStatusChanged.VirtualTopic
+activemq.orders-change-status.queue=Rf.All.Order.OrdersChangeStatus.Queue
+
+activemq-orders.broker-url=
+
+activemq-orders.user=
+
+activemq-orders.password=
+
+# Payment Method
+orders.payment-method-ids=4,5,6,10,11,23,24,25
+
+#Spring boot version 2.6.6
+spring.cloud.compatibility-verifier.enabled=false
+spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
+
+#Elastic APM
+elastic.apm.enabled=false
+elastic.apm.server-url=https://c2d4e1292b6c4676afaa34a2fa9d0354.apm.us-east-1.aws.cloud.es.io:443
+elastic.apm.service-name=order-bc
+elastic.apm.secret-token=kCSbL2fhBD7T7mEajI
+elastic.apm.environment=dev
+elastic.apm.application-packages=com.robinfood.order-bc
+elastic.apm.log-level=INFO

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_daily_voucher_br" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="52512a90-7911-4c71-83fd-9266bffe23d1">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="subReportCategoryTitle" class="java.io.InputStream"/>
+	<field name="listCategoryTitle" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<field name="subReportPaymentTitle" class="java.io.InputStream"/>
+	<field name="listPaymenTitle" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<field name="datePrint" class="java.lang.String"/>
+	<background>
+		<band height="802" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="802" uuid="b83d65a2-1fe6-4d84-ae76-d8a8bc76c7c4"/>
+				<box>
+					<pen lineWidth="2.0"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</frame>
+		</band>
+	</background>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<subreport>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="19" isPrintWhenDetailOverflows="true" uuid="34c189b7-f75b-4615-9c2f-84b393e0adc3"/>
+				<dataSourceExpression><![CDATA[$F{listCategoryTitle}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$F{subReportCategoryTitle}]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="23">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="19" isPrintWhenDetailOverflows="true" uuid="337ff18a-1608-4bf2-8b77-49ffb20700a3"/>
+				<dataSourceExpression><![CDATA[$F{listPaymenTitle}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$F{subReportPaymentTitle}]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement mode="Transparent" x="0" y="22" width="534" height="1" isPrintWhenDetailOverflows="true" uuid="ca274494-31d7-495d-9c00-6719750a1717"/>
+			</break>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="12">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="330" y="0" width="226" height="12" uuid="5fcba045-ef09-4e28-9679-9deaad72290d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["data de geração " + $F{datePrint}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

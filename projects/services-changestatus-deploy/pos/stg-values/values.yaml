@@ -1,0 +1,214 @@
+services:
+  - changestatusbc
+  - changestatusor
+
+common:
+  nodeSelector:
+    kube/nodetype: pos-arm
+
+  tolerations: 
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}  
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+
+  healthCheck: 
+    enabled: false
+    path: /actuator/health
+  
+  env:
+    - name: "SQUAD"
+      value: "CAI"
+    - name: "ENVIRONMENT"
+      value: "k8senv"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-logstash.devops.svc.cluster.local"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "CHANNEL"
+
+changestatusbc:
+  replicaCount: 1 
+
+  image:
+    repository: 625417001516.dkr.ecr.us-east-1.amazonaws.com/changestatus-bc
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1  
+
+  healthCheck: 
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "stg-changestatus-bc-app"
+  fullnameOverride: "stg-changestatus-bc-chart" 
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "stg-changestatus-bc" 
+
+  podAnnotations: {}  
+
+  podSecurityContext: {}
+    # fsGroup: 2000 
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000 
+
+  service:
+    type: NodePort
+    port: 8080  
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations: {
+      external-dns.alpha.kubernetes.io/hostname: stg-changestatus-bc.muystg.com
+    }
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: stg-changestatus-bc.muystg.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: muystg.com-tls
+      - hosts:
+        - "*.muystg.com" 
+
+  resources: 
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi 
+  redis:
+    enabled: true
+  env:
+    - name: "JAVA_OPTS"
+      value: "-Xms100m -Xmx512m"
+
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80 
+
+changestatusor:
+  replicaCount: 1 
+
+  image:
+    repository: 625417001516.dkr.ecr.us-east-1.amazonaws.com/changestatus-or
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1  
+  
+  healthCheck: 
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "stg-changestatus-or-app"
+  fullnameOverride: "stg-changestatus-or-chart" 
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "stg-changestatus-or" 
+
+  podAnnotations: {}  
+
+  podSecurityContext: {}
+    # fsGroup: 2000 
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000 
+
+  service:
+    type: NodePort
+    port: 8080  
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations: {
+      external-dns.alpha.kubernetes.io/hostname: stg-changestatus-or.muystg.com
+    }
+      # kubernetes.io/ingress.class: nginxg
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: stg-changestatus-or.muystg.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: muystg.com-tls
+      - hosts:
+        - "*.muystg.com"  
+
+  resources: 
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi 
+
+  env:
+    - name: "JAVA_OPTS"
+      value: "-Xms100m -Xmx512m"
+
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80 

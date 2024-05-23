@@ -1,0 +1,20 @@
+CREATE TABLE `order_payment_detail` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Tabla que almacena el detalle del pago cuando se realiza por datáfono o Autopago',
+  `order_id` int(10) unsigned NOT NULL COMMENT 'Identificador de la orden',
+  `order_payment_id` int(10) unsigned DEFAULT NULL COMMENT 'Identificador del pago específico',
+  `approval_code` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Código de aprobación de la transacción',
+  `pos_terminal_code` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Identificador del datáfono en el que se realizó el pago',
+  `self_management_code` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Identificador de la pantalla de autogestión en la que se realiza el pago',
+  `provider_id` int(11) DEFAULT NULL COMMENT 'Relación virtual',
+  `account_type` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Tipo de cuenta asociada a la tarjeta, Ej: Ahorros, Corriente',
+  `franchise_type` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Tipo de franquicia asociada a la tarjeta, Ej: Visa, Mastercard, etc.',
+  `additional_information` text COLLATE utf8mb4_unicode_ci COMMENT 'Información adicional entregada por cualquiera de los proveedores por donde se realiza el pago',
+  `unique_transaction_id` bigint(20) DEFAULT 0 COMMENT 'Almacena el id de la integración con la transacción que suministra el proveedor de datafonos',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `order_payment_detail_order_id_index` (`order_id`),
+  KEY `order_payment_detail_order_payment_id_index` (`order_payment_id`),
+  KEY `order_payment_detail_provider_id_index` (`provider_id`),
+  KEY `order_payment_detail_unique_transaction_id_index` (`unique_transaction_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

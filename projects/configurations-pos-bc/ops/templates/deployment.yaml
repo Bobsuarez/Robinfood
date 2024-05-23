@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "PROJECT_KEY.fullname" . }}
+  labels:
+    {{- include "PROJECT_KEY.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "PROJECT_KEY.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "PROJECT_KEY.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "PROJECT_KEY.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: filebeat-sidecar
+          image: 824759482132.dkr.ecr.us-east-1.amazonaws.com/filebeat:7.16.3-arm64
+          env:
+          {{- toYaml .Values.filebeatEnv | nindent 12 }}
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs/
+            - name: {{ .Values.nameOverride }}-config
+              mountPath: /usr/share/filebeat/filebeat.yml
+              subPath: filebeat.yml
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          env:
+          {{- toYaml .Values.appEnv | nindent 12 }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.healthCheck.enabled }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: {{ .Values.healthCheck.path }}
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 210
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - '-c'
+                - "curl localhost:8080{{ .Values.healthCheck.path }}  | grep  status | grep UP"
+            failureThreshold: 3
+            initialDelaySeconds: 220
+            periodSeconds: 40
+            successThreshold: 1
+            timeoutSeconds: 1
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs
+      volumes:
+        - name: {{ .Values.nameOverride }}-config
+          configMap:
+            name: {{ .Values.nameOverride }}-config
+            items:
+              - key: filebeat.yml
+                path: filebeat.yml
+        - name: logs
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "PROJECT_KEY.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

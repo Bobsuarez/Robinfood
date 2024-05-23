@@ -1,0 +1,63 @@
+package com.robinfood.app.usecases.statemachine;
+
+import com.robinfood.app.factory.IStateUseCaseFactory;
+import com.robinfood.core.dtos.OrderStateDTO;
+import com.robinfood.core.dtos.state.AbstractState;
+import com.robinfood.core.entities.StatusEntity;
+import com.robinfood.core.exceptions.GenericOrderBcException;
+import com.robinfood.core.utilities.ObjectMapperSingleton;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+import static com.robinfood.core.enums.AppOrderBcTraceEnum.STARTING_PROCESS_VALIDATE;
+import static com.robinfood.core.enums.AppOrderBcTraceEnum.STATES_LIST_FACTORY;
+
+@AllArgsConstructor
+@Component
+@Slf4j
+public class StateMachineUseCase implements IStateMachineUseCase {
+
+    private final IStateUseCaseFactory factoryStateUseCase;
+
+    @Override
+    public Boolean invoke(
+            OrderStateDTO actualState,
+            OrderStateDTO nextState,
+            List<StatusEntity> stateSystem,
+            Long idOrder
+    ) {
+
+        log.info(STARTING_PROCESS_VALIDATE.getMessageWithCode(), nextState.getCode());
+
+        List<AbstractState> listStates = factoryStateUseCase.getStates(stateSystem);
+
+        log.info(STATES_LIST_FACTORY.getMessageWithCode(), ObjectMapperSingleton.objectToJson(listStates));
+
+        AbstractState actualAbstractState = listStates.stream().
+                filter(state -> state.getCode().equals(actualState.getCode()))
+                .findFirst().orElseThrow(() ->
+                        new GenericOrderBcException("State does not exist in the database"));
+
+        if (!actualAbstractState.nextState(nextState)) {
+            return false;
+        }
+
+        String statecode = nextState.getCode();
+
+        if (nextState.getSubState() != null) {
+            statecode = nextState.getSubState().getCode();
+        }
+
+        String finalStateCode = statecode;
+
+        AbstractState nextAbstractState = listStates.stream().
+                filter(state -> state.getCode().equals(finalStateCode))
+                .findFirst().orElseThrow(() ->
+                        new GenericOrderBcException("State does not exist in the database"));
+
+        return nextAbstractState.action(idOrder);
+    }
+}

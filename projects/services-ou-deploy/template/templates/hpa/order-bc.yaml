@@ -1,0 +1,24 @@
+{{- if .Values.orderbc.autoscaling.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "servicesou.orderbc.fullname" . }}
+  labels:
+    {{- include "servicesou.orderbc.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "servicesou.orderbc.fullname" . }}
+  minReplicaCount: {{ .Values.orderbc.autoscaling.minReplicas }}
+  maxReplicaCount: {{ .Values.orderbc.autoscaling.maxReplicas }}
+  triggers:
+  {{- if .Values.orderbc.autoscaling.threshold }}
+  - type: prometheus
+    metadata:
+      serverAddress: {{ .Values.orderbc.autoscaling.prometheusUrl }}
+      metricName: {{ .Values.orderbc.autoscaling.metricName }}
+      query: sum(rate({{ .Values.orderbc.autoscaling.metricName }}{service="{{ .Values.orderbc.fullnameOverride }}"}[2m]))
+      threshold: "{{ .Values.orderbc.autoscaling.threshold }}"
+  {{- end }}
+{{- end }}

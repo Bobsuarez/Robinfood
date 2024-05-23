@@ -1,0 +1,17 @@
+**.git
+**.gitignore
+**.gitattributes
+**.sass-cache
+
+**/.DS_Store
+**/git
+**.md
+.idea
+.editorconfig
+.dockerignore
+Dockerfile
+task-definition*.json
+
+/src/test/
+/mvnw
+/mvnw.cmd

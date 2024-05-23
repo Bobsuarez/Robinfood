@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "servicesou.ordercreation.fullname" . }}
+  labels:
+    {{- include "servicesou.ordercreation.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.ordercreation.autoscaling.enabled }}
+  replicas: {{ .Values.ordercreation.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "servicesou.ordercreation.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.ordercreation.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "servicesou.ordercreation.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.ordercreation.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "servicesou.ordercreation.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.ordercreation.podSecurityContext | nindent 8 }}
+      containers:
+        - name: filebeat-sidecar
+          image: public.ecr.aws/d9e2y2w1/filebeat:7.16.3-arm
+          env:
+          {{- toYaml .Values.ordercreation.filebeatEnv | nindent 12 }}
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+            limits:
+              cpu: 2000m
+              memory: 2048Mi
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs/
+            - name: filebeat-ou-config
+              mountPath: /usr/share/filebeat/filebeat.yml
+              subPath: filebeat.yml
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.ordercreation.securityContext | nindent 12 }}
+          image: "{{ .Values.ordercreation.image.repository }}:{{ .Values.ordercreation.image.tag | default .Chart.AppVersion }}"
+          env:
+          {{- toYaml .Values.ordercreation.appEnv | nindent 12 }}
+          imagePullPolicy: {{ .Values.ordercreation.image.pullPolicy }}
+          {{- if .Values.ordercreation.healthCheck.enabled }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: {{ .Values.ordercreation.healthCheck.path }}
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 120
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - '-c'
+                - "curl localhost:8080{{ .Values.ordercreation.healthCheck.path }}  | grep  status | grep UP"
+            failureThreshold: 3
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.ordercreation.resources | nindent 12 }}
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs
+      volumes:
+        - name: filebeat-ou-config
+          configMap:
+            name: filebeat-ou-config
+            items:
+              - key: filebeat.yml
+                path: filebeat.yml
+        - name: logs
+        {{- if .Values.ordercreation.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.ordercreation.persistence.existingClaim | default (include "servicesou.ordercreation.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.ordercreation.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ordercreation.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ordercreation.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

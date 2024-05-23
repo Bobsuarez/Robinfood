@@ -1,0 +1,126 @@
+{
+  "executionRoleArn": "arn:aws:iam::824759482132:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/posv2-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "CODE_BRANCH"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "environment": [
+        {
+          "name": "VIRTUAL_HOST",
+          "value": "CODE_BRANCH.posv2.muydev.com"
+        },
+        {
+          "name": "JAVA_OPTS",
+          "value": "-Xms128m -Xmx2048m"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "posv2-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/posv2:IMAGE_TAG",
+      "name": "posv2"
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/posv2-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "posv2-logstash"
+        }
+      },
+      "portMappings": [
+        {
+          "containerPort": 5044
+        }
+      ],
+      "environment": [
+        {
+          "name": "ES_HOSTS",
+          "value": "https://elk-logs-analytics.muydev.com:443"
+        },
+        {
+          "name": "xpack.monitoring.enabled",
+          "value": "false"
+        },
+        {
+          "name": "LOG_INDEX",
+          "value": "logs-cai-posv2-%{+YYYY.MM.dd}"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/logstash",
+      "essential": false,
+      "name": "logstash",
+      "healthCheck": {
+        "retries": 3,
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:9600/ || exit 1"
+        ],
+        "timeout": 5,
+        "interval": 30,
+        "startPeriod": 60
+      }
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/posv2-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "posv2-filebeat"
+        }
+      },
+      "environment": [
+        {
+          "name": "LOGSTASH_HOSTS",
+          "value": "localhost:5044"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "posv2-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/filebeat",
+      "essential": false,
+      "name": "filebeat",
+      "dependsOn": [
+        {
+          "containerName": "logstash",
+          "condition": "HEALTHY"
+        }
+      ]
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::824759482132:role/posv2-role-dev",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "memory": "2048",
+  "family": "posv2",
+  "networkMode": "awsvpc",
+  "cpu": "1024",
+  "volumes": [
+    {
+      "name": "posv2-logs"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+Connection Mongo DB
+server.port=8085
+spring.data.mongodb.host=localhost
+spring.data.mongodb.port=27017
+spring.data.mongodb.database=local_configuration
+
+#spring.data.mongodb.username=root
+
+#spring.data.mongodb.password=egedodew123.
+logging.level.org.mongodb=warn
+
+
+Redis
+spring.redis.host=localhost
+spring.redis.port=6379
+token-to-orchestrator.redis-id=service-tokena-localserver
+token-to-orchestrator.issuer=backoffice.v1
+
+
+Credentials sso
+sso.credentials.email=HCY0lEyhD6TdWHSqaEQCu8BThhQbugTH7xEqVqcrsEJ/fYs+xMZ0BC8hMSdM8m27yWWMKQuVlT0rxw7ujcsdoTOKGyrfbiYrQQqwcmlB1/GGlPQ5i8N6PLKgh6f8EsaEgDZbQF367clsDGwbDXGFExpCHVPan8leAyYhpvpjBimTI+/4shYRNhdxUDJIKhmb+7Wo6WZ+T5TQLrSixBWSQOs1/o024QXRonAi60p5peYTyi6PQd244U4od+prWVHlNf2bYABWV63LI5O4LfiOAs8dg09t5hruCBYrPqsPwnuFyd4YXiolCD4SWvPqebobpMuYaOX+DBAD1o1VyPoDbw==
+sso.credentials.password=wDONg0ty+JTCQ4z4w8v2ITLBnODmwddWEPqdPfOntKnil8LSb7ccLu8Ouxh4kv+7Bz4zzSf0on5Y1owaZfJO57F3DAxJJ0+bGonk/lCTmoBAehh565mZoVwvzgWDL+IxqCPBbhqLgUMLzaAP4irYzNKRMyphadU/g4dD2NjmiRF5reY+yK83blaQoTAsvnOCLzYGVSI9myE4hGDzRiBU+QT9rWE4wMxvWTjPUFrfIfcqOUG6t8PteKnd/HcbXgjanP5ErkH03CwRcUbK35eljq6LDK473xSsRA8DNoFR1Ugn4sGpadoOaceRJy04aJVH5TZTJT2oJLKgw0BDopxGdg==
+sso.authorization.apptoken=b6825c37880cd6625c9c5ce6677c303e027e8fae6ca7e88cd564d3788cd38b9982fd4eece7148e79b255ccc254c6316c00e93a74199baf10123d4d15538a3ce2
+sso.authorization.appid=print-local-service
+sso.authorization.scopes=posv2,orderCreationQueries,order_creation_queries,orderCreation,order_creation,orderBc,order_bc,menu_bc,menu_base,MENU_DISCOUNTS_SERVICES,order_or_localserver
+
+
+Crons
+spring.enable.scheduling=true
+scheduler.cron.store-configuration= 0 0 12 * * ?
+scheduler.cron.websocket-reconnect= 0 */3 * * * *
+scheduler.timezone.websocket-reconnect= America/Bogota
+scheduler.timezone.store-configuration= America/Bogota
+scheduler.store-id= 10
+
+
+Network
+feign.client.url.store-or=https://dev.store-or.muydev.com/api/
+feign.client.url.localserver_ch=https://dev.store-or.muydev.com/api/
+feign.client.url.sathub=https://9b21-186-155-0-86.ngrok-free.app/hub/v1
+feign.client.url.electronicbilldigitalsign=http://localhost:81/api/v1
+feign.client.url.sso=https://a06siqgrqd.execute-api.us-east-2.amazonaws.com/
+feign.client.url.orderorqueries=https://steamstable-pos-order-creation-queries.rf-dev.com/api/v1/
+feign.client.url.localorderbc=http://localhost:8095/api/
+feign.client.url.local-printer-bc=http://localhost:8089/api/
+
+
+WebSocketClient Properties
+websocket.client.server_endpoint= wss://localserversocket-ad.muydev.com
+websocket.client.id=EwKAXSyWC0pIm0gsFoCzY9AYGXmeO62yEPHzPv0NWyORs2CUHLNPawaJXIsfy7r56sAKyQU0a1rTzRl60C2VWxVQjCF6HUDs1kpuU%2FZURIqYC1qBriC4oYmRGgvS9P18tz4QfV5VxaSPoO%2F58Xii7vXUgXkSDKr5TbgjUOUk60G7dm9aMW1d3Ec0UBavDCkqXL%2BD4yxghtuMUx5YjGx0bB5xuHmm1GEQ4XVqz6ddfCiyJ%2FhkjL8zNn6%2BMjbJSx1elR1g27ua5HpvNqkb7t%2BOO8gXSMEIAGwLm2vjV98ckMiX3IomCkyEfHtLgBybY0tAZY%2Bj9WOp4WptGCjKhp02fA%3D%3D
+websocket.client.secret=cVBRRkNpanZOSWdJZ21aZEV0VVpDS3Y3YkwyYjNXZU9JeUNFZTZHWg==
+websocket.client.storeid=10
+websocket.client.posid=34
+websocket.client.pingintervalms=570000
+websocket.client.environment=dev
+
+Locale
+app.locale.language=es
+app.locale.country=co
+
+
+Spring global configurations
+spring.cloud.loadbalancer.ribbon.enable=false
+spring.main.allow-bean-definition-overriding=true
+
+
+Level Error
+logging.level.root=INFO
+spring.application.name=localserver
+spring.application.environment=development
+
+order.cancellation.time=30
+
+
+printers={"printers": [{"name": "Cocina 1","ip": "192.168.0.31"},{"name": "Cocina 2","ip": "192.168.0.31"},{"name": "Caja 1","ip": "192.168.0.31"},{"name": "Caja 2","ip": "192.168.0.31"},{"name": "Domicilios","ip": "192.168.0.319"},{"name": "Caja Online","ip": "192.168.0.31"}]}

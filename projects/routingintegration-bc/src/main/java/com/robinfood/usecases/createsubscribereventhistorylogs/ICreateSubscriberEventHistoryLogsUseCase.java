@@ -1,0 +1,9 @@
+package com.robinfood.usecases.createsubscribereventhistorylogs;
+
+import com.robinfood.dtos.createsubscribereventhistorylogs.request.SubscriberEventHistoryLogsRequestDTO;
+import com.robinfood.dtos.createsubscribereventhistorylogs.response.SubscriberEventHistoryLogsResponseDTO;
+
+public interface ICreateSubscriberEventHistoryLogsUseCase {
+
+    SubscriberEventHistoryLogsResponseDTO invoke(SubscriberEventHistoryLogsRequestDTO requestDTO);
+}

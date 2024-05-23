@@ -1,0 +1,32 @@
+{{- if .Values.ordercreation.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "servicesou.ordercreation.fullname" . }}
+  labels:
+    {{- include "servicesou.ordercreation.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "servicesou.ordercreation.fullname" . }}
+  minReplicas: {{ .Values.ordercreation.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.ordercreation.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.ordercreation.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.ordercreation.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.ordercreation.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.ordercreation.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

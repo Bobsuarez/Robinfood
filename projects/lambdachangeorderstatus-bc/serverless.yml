@@ -1,0 +1,57 @@
+service: changeorderstatus-bc
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: java11
+  stage: dev
+  region: us-east-1
+  environment:
+    DESTINATION: Rf.All.Order.OrdersChangeStatus.Queue
+    JWT_TOKEN_SECRET: --- devops ----
+
+plugins:
+  - serverless-domain-manager
+
+package:
+  artifact: target/changeorderstatus-bc-dev.jar
+
+functions:
+  changeOrderStatus:
+    snapStart: true
+    timeout: 15
+    handler: com.robinfood.handlers.ChangeOrderStatusHandler
+    events:
+      - httpApi:
+          path: /api/v1/orders/creation/states
+          method: post
+    environment:
+      BROKER_PASSWORD: --- devops ----
+      BROKER_URL: --- devops ----
+      BROKER_USERNAME: --- devops ----
+
+  changeOrderStatus-pos:
+    snapStart: true
+    timeout: 15
+    handler: com.robinfood.handlers.ChangeOrderStatusPosHandler
+    events:
+      - httpApi:
+          path: /api/v1/orders/pos/creation/states
+          method: post
+    environment:
+      BROKER_PASSWORD: --- devops ----
+      BROKER_URL: --- devops ----
+      BROKER_USERNAME: --- devops ----
+
+
+custom:
+  customDomain:
+    http:
+      domainName: lambdachangeorderstatus-bc.muydev.com
+      basePath: ''
+      stage: ${self:provider.stage}
+      certificateName: '*.muydev.com'
+      createRoute53Record: true
+      endpointType: 'regional'
+      securityPolicy: tls_1_2

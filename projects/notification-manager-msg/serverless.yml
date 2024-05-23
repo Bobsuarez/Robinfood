@@ -1,0 +1,56 @@
+service: notification-manager-msg
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: java11
+  stage: dev
+  region: us-east-1
+  environment:
+    DESTINATION: Rf.All.Order.OrderStatusChanged.VirtualTopic
+    JWT_TOKEN_SECRET: gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+    JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+
+#plugins:
+#  - serverless-domain-manager
+
+package:
+  artifact: target/notification-manager-msg-dev.jar
+
+functions:
+  changeStatusPubPos:
+    snapStart: true
+    timeout: 30
+    handler: com.robinfood.handlers.ChangeStatusPubPosHandler
+    events:
+      - httpApi:
+          path: /api/v1/message/channel/pos/change-status
+          method: post
+    environment:
+      BROKER_URL: ssl://b-5e2f0620-f15a-4d2b-8cac-3b1c6b000889-1.mq.us-east-1.amazonaws.com:61617
+      BROKER_USER: orders
+      BROKER_PASSWORD: 63cx3wgGXVw2
+  changeStatusPubIntegration:
+    snapStart: true
+    timeout: 30
+    handler: com.robinfood.handlers.ChangeStatusPubIntegrationHandler
+    events:
+      - httpApi:
+          path: /api/v1/message/channel/integration/change-status
+          method: post
+    environment:
+      BROKER_URL: ssl://b-cdf47457-eb20-4af2-8945-d2d890743e33-1.mq.us-east-1.amazonaws.com:61617
+      BROKER_USER: caiteam
+      BROKER_PASSWORD: jj0hHbUViAt43eim
+
+#custom:
+#  customDomain:
+#    http:
+#      domainName: notification-manager-msg.rf-dev.com
+#      basePath: ''
+#      stage: ${self:provider.stage}
+#      certificateName: '*.rf-dev.com'
+#      createRoute53Record: true
+#      endpointType: 'regional'
+#      securityPolicy: tls_1_2

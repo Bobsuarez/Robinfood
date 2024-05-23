@@ -1,0 +1,64 @@
+server.port=8080
+
+# Active MQ
+spring.activemq.broker-url=ssl://b-d8bb126e-a6c3-48ba-beab-2f19245e4ea3-1.mq.us-east-2.amazonaws.com:61617
+spring.activemq.in-memory=false
+spring.activemq.user=
+spring.activemq.password=
+activemq.paid-orders.client_id=order-bc
+activemq.paid-orders.topic=active-mq-order-bc
+activemq.orders-status-update.topic=Orders.StatusUpdate.Topic
+activemq.orders-created.topic=Orders.Created.Topic
+activemq.orders-to-created.topic=Orders.ToCreate.Topic
+activemq.orders-response.topic=Orders.Response.Topic
+
+# Error handling
+server.error.include-stacktrace=never
+server.error.include-message=always
+
+#JWT Token
+jwt-token-prefix=Bearer\u0020
+jwt-token-secret=
+jwt-token-aud=internal
+jwt-token-mod=order_creation
+
+#Foodcoins payment method id
+payment.method-foodcoins-id=7
+
+# PayU Payment Method
+payment.method-payu-id=6
+
+# Validate payment methods detail
+payment-methods-ids-allowed-to-validate-detail=4,5,6,9,10,11,12
+
+# Thread Pool
+thread.core-pool-size=5
+thread.max-pool-size=10
+thread.queue-capacity=1000
+
+# Urls
+url.coupon-system=https://dev.makeitrain.muydev.com/api/
+url.cubano=https://dev.cubano.muydev.com/api/
+url.discounts=https://dev.menu-bc-discounts.muydev.com/api/
+url.loyalty=https://dev.loyalty.muydev.com/api/
+url.menu-bc=https://dev.menu-bc.muydev.com/api/
+url.order-bc=https://dev.order-bc.muydev.com/api/
+url.taxes-bc=https://dev.taxes-bc.muydev.com/api/
+url.token-to-business-capability=https://a06siqgrqd.execute-api.us-east-2.amazonaws.com/
+url.payment-methods-bc=https://rce-release-01.paymentmethods-bc.muydev.com/api/
+url.store-configurations=https://dev.store-configurations.muydev.com/api/
+
+# Swagger
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=method
+springdoc.packagesToScan=com.robinfood.app.controllers
+
+# Application Name
+spring.application.name=orderCreation
+spring.redis.host=localhost
+spring.redis.port=6379
+token-to-business-capability.auth-secret=
+token-to-business-capability.redis-id=service-token
+token-to-business-capability.issuer=backoffice.v1
+token-to-business-capability.auth-key=

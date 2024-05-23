@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  sonarqube:
+    image: sonarqube:lts
+    ports:
+      - 9000:9000
+  order-bc:
+    container_name: order-bc
+    build:
+      context: order-bc
+      dockerfile: Dockerfile
+    environment:
+      - ORDER_BC_MYSQL_HOST=${DOCKER_GATEWAY_HOST:-host.docker.internal}
+    network:
+      - order-bc-network
+    ports:
+      - '8095:8080'
+    restart: always
+    volumes:
+      - ./order-bc:/order-bc
+    working_dir: /order-bc
+volumes:
+  dbdata:
+    driver: local
+networks:
+  order-bc-network:
+    driver: bridge

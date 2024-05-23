@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="685.0" prefWidth="1024.0" stylesheets="@../css/templateLocker.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.com.robinfood.queue.view.controller.ElectronicBillingController">
+    <children>
+        <GridPane prefHeight="685.0" prefWidth="1024.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <ImageView fitHeight="150.0" fitWidth="1024.0" pickOnBounds="true">
+                    <image>
+                        <Image url="@../img/BannerRobinfood.jpg" />
+                    </image>
+                </ImageView>
+                <GridPane GridPane.rowIndex="1">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" percentHeight="75.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <GridPane prefHeight="90.0" prefWidth="1024.0" GridPane.rowIndex="1">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="341.0" percentWidth="50.0" prefWidth="341.0" />
+                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="415.0" minWidth="10.0" prefWidth="394.0" />
+                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="388.0" minWidth="10.0" percentWidth="25.0" prefWidth="213.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Button mnemonicParsing="false" onAction="#exit" prefHeight="65.0" prefWidth="170.0" styleClass="config_button_red" text="Exit" GridPane.columnIndex="2" GridPane.valignment="CENTER" />
+                                <Button fx:id="btnPurgeData" mnemonicParsing="false" onAction="#purgeData" prefHeight="65.0" prefWidth="170.0" styleClass="config_button_blue_dark" text="Purge Data" GridPane.columnIndex="1" GridPane.valignment="CENTER">
+                                    <GridPane.margin>
+                                        <Insets />
+                                    </GridPane.margin>
+                                </Button>
+                                <GridPane styleClass="panel-shadow">
+                                    <columnConstraints>
+                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" percentHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <GridPane alignment="CENTER" GridPane.rowIndex="1">
+                                            <columnConstraints>
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <Label onMouseClicked="#onClickDev" text="Profile Dev">
+                                                    <styleClass>
+                                                        <String fx:value="coolvetica-bold" />
+                                                        <String fx:value="label-18" />
+                                                    </styleClass>
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                    <tooltip>
+                                                        <Tooltip text="Order-or-localserver-ECS" />
+                                                    </tooltip>
+                                                </Label>
+                                                <Label layoutX="333.0" layoutY="13.0" onMouseClicked="#onClickProd" text="Profile Prod" GridPane.columnIndex="1">
+                                                    <styleClass>
+                                                        <String fx:value="coolvetica-bold" />
+                                                        <String fx:value="label-18" />
+                                                    </styleClass>
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                    <tooltip>
+                                                        <Tooltip text="Order-creation-EKS" />
+                                                    </tooltip>
+                                                </Label>
+                                            </children>
+                                        </GridPane>
+                                        <GridPane>
+                                            <columnConstraints>
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <Label text="Pre Configuration">
+                                                    <styleClass>
+                                                        <String fx:value="coolvetica-bold" />
+                                                        <String fx:value="label-18" />
+                                                    </styleClass>
+                                                </Label>
+                                            </children>
+                                        </GridPane>
+                                    </children>
+                                    <GridPane.margin>
+                                        <Insets bottom="20.0" left="30.0" right="30.0" />
+                                    </GridPane.margin>
+                                </GridPane>
+                            </children>
+                        </GridPane>
+                        <GridPane>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <GridPane>
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label alignment="CENTER" prefHeight="38.0" prefWidth="673.0" text="Connection a BD">
+                                            <styleClass>
+                                                <String fx:value="label-30" />
+                                                <String fx:value="coolvetica-bold" />
+                                            </styleClass>
+                                        </Label>
+                                        <GridPane GridPane.rowIndex="1">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <TextField fx:id="txtMsqlURL" alignment="CENTER" prefHeight="24.0" prefWidth="354.0" promptText="Mysql URL ">
+                                                    <opaqueInsets>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </opaqueInsets>
+                                                    <GridPane.margin>
+                                                        <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+                                                    </GridPane.margin>
+                                                </TextField>
+                                                <TextField fx:id="txtMysqlUser" alignment="CENTER" prefHeight="24.0" prefWidth="354.0" promptText="Msql User" GridPane.rowIndex="1">
+                                                    <opaqueInsets>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </opaqueInsets>
+                                                    <GridPane.margin>
+                                                        <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+                                                    </GridPane.margin>
+                                                </TextField>
+                                                <TextField fx:id="txtMysqlPassword" alignment="CENTER" prefHeight="24.0" prefWidth="354.0" promptText="Mysql Password" GridPane.rowIndex="2">
+                                                    <opaqueInsets>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </opaqueInsets>
+                                                    <GridPane.margin>
+                                                        <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+                                                    </GridPane.margin>
+                                                </TextField>
+                                                <GridPane GridPane.rowIndex="4">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    </rowConstraints>
+                                                    <children>
+                                                        <CheckBox mnemonicParsing="false" text="Topic" visible="false">
+                                                            <styleClass>
+                                                                <String fx:value="coolvetica-bold" />
+                                                                <String fx:value="label-20" />
+                                                            </styleClass>
+                                                        </CheckBox>
+                                                        <CheckBox disable="true" mnemonicParsing="false" text="Firm" visible="false" GridPane.columnIndex="2">
+                                                            <styleClass>
+                                                                <String fx:value="coolvetica-bold" />
+                                                                <String fx:value="label-20" />
+                                                            </styleClass>
+                                                        </CheckBox>
+                                                        <CheckBox mnemonicParsing="false" text="SQS" visible="false" GridPane.columnIndex="1">
+                                                            <styleClass>
+                                                                <String fx:value="coolvetica-bold" />
+                                                                <String fx:value="label-20" />
+                                                            </styleClass>
+                                                        </CheckBox>
+                                                    </children>
+                                                </GridPane>
+                                    <GridPane GridPane.rowIndex="3">
+                                      <columnConstraints>
+                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Button fx:id="btnSearchData" mnemonicParsing="false" onAction="#onSearchData" prefHeight="65.0" prefWidth="170.0" styleClass="config_button_orange_black" text="Search Data" GridPane.columnIndex="1" />
+                                          <Button mnemonicParsing="false" onAction="#onConnect" prefHeight="65.0" prefWidth="170.0" styleClass="config_button_purple_light" text="Connect" />
+                                       </children>
+                                    </GridPane>
+                                            </children>
+                                        </GridPane>
+                                    </children>
+                                </GridPane>
+                                <GridPane styleClass="panel-shadow" GridPane.columnIndex="1">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label alignment="CENTER" prefHeight="38.0" prefWidth="673.0" text="Data With Error">
+                                            <styleClass>
+                                                <String fx:value="label-30" />
+                                                <String fx:value="coolvetica-bold" />
+                                            </styleClass>
+                                        </Label>
+                                        <TableView fx:id="tblDataOrders" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                                            <columns>
+                                                <TableColumn fx:id="tblColumnOrderId" text="Order Id" />
+                                                <TableColumn fx:id="tblColumnCode" text="Status Code" />
+                                                <TableColumn fx:id="tblColumnPayload" editable="false" text="Req. Payload" />
+                                                <TableColumn fx:id="tblColumnError" editable="false" text="Message Error" />
+                                                <TableColumn fx:id="tblColumnRetry" text="Retry" />
+                                                <TableColumn fx:id="tblColumnSend" editable="false" text="Send" />
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                           <GridPane.margin>
+                              <Insets right="20.0" />
+                           </GridPane.margin>
+                                </GridPane>
+                            </children>
+                        </GridPane>
+                    </children>
+                </GridPane>
+            </children>
+        </GridPane>
+    </children>
+    <styleClass>
+        <String fx:value="config_container" />
+        <String fx:value="panel-shadow" />
+    </styleClass>
+</AnchorPane>

@@ -1,0 +1,32 @@
+server.port=8095
+
+spring.mvc.throw-exception-if-no-handler-found=true
+spring.application.name=localorder-bc
+
+#Data base connection info
+spring.datasource.initialization-mode=never
+spring.datasource.url=jdbc:mysql://localhost:3306/local_orders
+spring.datasource.username=root
+spring.datasource.password=bob123*
+spring.jpa.database-platform=org.hibernate.dialect.MySQL5InnoDBDialect
+spring.jpa.hibernate.use-new-id-generator-mappings=false
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.generate-ddl=false
+
+# Redis
+spring.redis.host=localhost
+spring.redis.port=6379
+token-to-tokenuser.redis-id=service-token-localorderbc
+token-to-tokenuser.issuer=backoffice.v1
+
+# Credentials sso
+sso.credentials.email=HCY0lEyhD6TdWHSqaEQCu8BThhQbugTH7xEqVqcrsEJ/fYs+xMZ0BC8hMSdM8m27yWWMKQuVlT0rxw7ujcsdoTOKGyrfbiYrQQqwcmlB1/GGlPQ5i8N6PLKgh6f8EsaEgDZbQF367clsDGwbDXGFExpCHVPan8leAyYhpvpjBimTI+/4shYRNhdxUDJIKhmb+7Wo6WZ+T5TQLrSixBWSQOs1/o024QXRonAi60p5peYTyi6PQd244U4od+prWVHlNf2bYABWV63LI5O4LfiOAs8dg09t5hruCBYrPqsPwnuFyd4YXiolCD4SWvPqebobpMuYaOX+DBAD1o1VyPoDbw==
+sso.credentials.password=wDONg0ty+JTCQ4z4w8v2ITLBnODmwddWEPqdPfOntKnil8LSb7ccLu8Ouxh4kv+7Bz4zzSf0on5Y1owaZfJO57F3DAxJJ0+bGonk/lCTmoBAehh565mZoVwvzgWDL+IxqCPBbhqLgUMLzaAP4irYzNKRMyphadU/g4dD2NjmiRF5reY+yK83blaQoTAsvnOCLzYGVSI9myE4hGDzRiBU+QT9rWE4wMxvWTjPUFrfIfcqOUG6t8PteKnd/HcbXgjanP5ErkH03CwRcUbK35eljq6LDK473xSsRA8DNoFR1Ugn4sGpadoOaceRJy04aJVH5TZTJT2oJLKgw0BDopxGdg==
+sso.authorization.apptoken=b6825c37880cd6625c9c5ce6677c303e027e8fae6ca7e88cd564d3788cd38b9982fd4eece7148e79b255ccc254c6316c00e93a74199baf10123d4d15538a3ce2
+sso.authorization.appid=print-local-service
+sso.authorization.scopes=posv2,orch_menu,orch_order,order_creation,order_creation_queries,integrationsbackoffice_or_platforms,cupones
+
+# Network
+feign.client.url.sso=https://a06siqgrqd.execute-api.us-east-2.amazonaws.com/
+#feign.client.url.ordercreation=https://localserver.muydev.com/api/
+feign.client.url.common_integration_layer=https://routingintegration-or.rf-dev.com/api/

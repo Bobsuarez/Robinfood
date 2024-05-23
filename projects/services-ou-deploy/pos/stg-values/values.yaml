@@ -1,0 +1,582 @@
+# Default values for project.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+orderbc:
+  replicaCount: 1 
+
+  image:
+    repository: 625417001516.dkr.ecr.us-east-1.amazonaws.com/order-bc
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1  
+  
+  healthCheck: 
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "stg-order-bc-app"
+  fullnameOverride: "stg-order-bc-chart" 
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "stg-order-bc" 
+
+  podAnnotations: {}  
+
+  podSecurityContext: {}
+    # fsGroup: 2000 
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000 
+
+  service:
+    type: NodePort
+    port: 8080  
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations: {
+      external-dns.alpha.kubernetes.io/hostname: stg-order-bc.muystg.com
+    }
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: stg-order-bc.muystg.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: muystg.com-tls
+      - hosts:
+        - "*.muystg.com"
+
+  resources: 
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 100m
+      memory: 512Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 128Mi 
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "pos"
+    - name: "ENVIRONMENT"
+      value: "stg"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-logstash.devops.svc.cluster.local"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "CHANNEL"
+    #- name: "JAVA_OPTS"
+    #  value: "-Xmx768m"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    threshold: 5
+    metricName: "nginx_ingress_controller_requests"
+    prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80
+
+  nodeSelector:
+    kube/nodetype: pos
+    
+  tolerations: 
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}  
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+
+
+ordercreation:
+  replicaCount: 1 
+
+  image:
+    repository: 625417001516.dkr.ecr.us-east-1.amazonaws.com/order-creation
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1  
+  
+  healthCheck: 
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "stg-order-creation-app"
+  fullnameOverride: "stg-order-creation-chart" 
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "stg-order-creation" 
+
+  podAnnotations: {}  
+
+  podSecurityContext: {}
+    # fsGroup: 2000 
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000 
+
+  service:
+    type: NodePort
+    port: 8080  
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations: {
+      external-dns.alpha.kubernetes.io/hostname: stg-order-creation.muystg.com
+    }
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: stg-order-creation.muystg.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: muystg.com-tls
+      - hosts:
+        - "*.muystg.com"  
+
+  resources: 
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 128Mi 
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "pos"
+    - name: "ENVIRONMENT"
+      value: "stg"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-logstash.devops.svc.cluster.local"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "CHANNEL"
+    #- name: "JAVA_OPTS"
+    #  value: "-Xmx768m"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80 
+
+  nodeSelector:
+    kube/nodetype: pos
+    
+  tolerations: 
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}  
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+
+taxesbc:
+  replicaCount: 1 
+
+  image:
+    repository: 625417001516.dkr.ecr.us-east-1.amazonaws.com/taxes-bc
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1  
+  
+  healthCheck: 
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "stg-taxes-bc-app"
+  fullnameOverride: "stg-taxes-bc-chart" 
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "stg-taxes-bc" 
+
+  podAnnotations: {}  
+
+  podSecurityContext: {}
+    # fsGroup: 2000 
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000 
+
+  service:
+    type: NodePort
+    port: 8080  
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations: {
+      external-dns.alpha.kubernetes.io/hostname: stg-taxes-bc.muystg.com
+    }
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: stg-taxes-bc.muystg.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: muystg.com-tls
+      - hosts:
+        - "*.muystg.com"  
+
+  resources: 
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 128Mi 
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "pos"
+    - name: "ENVIRONMENT"
+      value: "stg"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-logstash.devops.svc.cluster.local"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "CHANNEL"
+    #- name: "JAVA_OPTS"
+    #  value: "-Xmx768m"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    threshold: 10
+    metricName: "nginx_ingress_controller_requests"
+    prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80
+
+  nodeSelector:
+    kube/nodetype: pos
+    
+  tolerations: 
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}  
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+
+ordercreationqueries:
+  replicaCount: 1 
+
+  image:
+    repository: 625417001516.dkr.ecr.us-east-1.amazonaws.com/order-creation-queries
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1  
+  
+  healthCheck: 
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "stg-order-creation-queries-app"
+  fullnameOverride: "stg-order-creation-queries-chart" 
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "stg-order-creation-queries" 
+
+  podAnnotations: {}  
+
+  podSecurityContext: {}
+    # fsGroup: 2000 
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000 
+
+  service:
+    type: NodePort
+    port: 8080  
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations: {
+      external-dns.alpha.kubernetes.io/hostname: stg-order-creation-queries.muystg.com
+    }
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: stg-order-creation-queries.muystg.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: muystg.com-tls
+      - hosts:
+        - "*.muystg.com"  
+
+  resources: 
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 128Mi 
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "pos"
+    - name: "ENVIRONMENT"
+      value: "stg"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-logstash.devops.svc.cluster.local"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "CHANNEL"
+      
+    #- name: "JAVA_OPTS"
+    #  value: "-Xmx768m"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    threshold: 5
+    metricName: "nginx_ingress_controller_requests"
+    prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80 
+
+  nodeSelector:
+    kube/nodetype: pos
+    
+  tolerations: 
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}  
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+
+orderorlocalserver:
+  replicaCount: 1 
+
+  image:
+    repository: 625417001516.dkr.ecr.us-east-1.amazonaws.com/order-or-localserver
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1  
+  
+  healthCheck: 
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "stg-order-or-localserver-app"
+  fullnameOverride: "stg-order-or-localserver-chart" 
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "stg-order-or-localserver" 
+
+  podAnnotations: {}  
+
+  podSecurityContext: {}
+    # fsGroup: 2000 
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000 
+
+  service:
+    type: NodePort
+    port: 8080  
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations: {
+      external-dns.alpha.kubernetes.io/hostname: stg-order-or-localserver.muystg.com
+    }
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: stg-order-or-localserver.muystg.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: muystg.com-tls
+      - hosts:
+        - "*.muystg.com"  
+
+  resources: 
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 128Mi 
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "pos"
+    - name: "ENVIRONMENT"
+      value: "stg"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-logstash.devops.svc.cluster.local"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "CHANNEL"
+    #- name: "JAVA_OPTS"
+    #  value: "-Xmx768m"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80 
+
+  nodeSelector:
+    kube/nodetype: pos
+    
+  tolerations: 
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule" 
+
+  affinity: {}  
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs

@@ -1,0 +1,147 @@
+@Library('jenkins-shared-libraries') _
+
+pipeline {
+    agent { kubernetes(k8sAgent(name: 'ubuntuarm64', jnlpImage: 'public.ecr.aws/d9e2y2w1/jenkins-inbound-agent:arm64')) }
+
+    tools {
+        jdk 'OpenJDK-11-arm64'
+        gradle 'gradle6.8.2'
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    parameters {
+        string(
+            name: 'CODE_BRANCH',
+            defaultValue: '',
+            description: 'Code branch to deploy.'
+        )
+    }
+
+    environment {
+        PROJECT_KEY = 'order-creation'
+        REPOSITORY = "git@bitbucket.org:muytech/${PROJECT_KEY}.git"
+        REGION = 'us-east-1'
+        AWS_KEY_MUY_DEV = credentials('AWS_ACCESS_KEY_ROBINFOOD_DEV')
+        AWS_SECRET_MUY_DEV = credentials('AWS_SECRET_KEY_ROBINFOOD_DEV')
+        CODE_ARTIFACT_REPO = 'robinfood-artifacts'
+        SQUAD = 'pos'
+        JACOCO_REPORT_PATH = '/build/reports/jacoco/test/jacocoTestReport.xml'
+    }
+
+    stages {
+        stage('Pre-Config Pipeline') {
+            steps {
+                script {
+                    eksPreConfigPipeline('gradle')
+                }
+            }
+        }
+
+        stage('Unit Test Execution') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            steps {
+                script {
+                    eksBuildTest('gradle')
+                }
+            }
+        }
+
+        stage('Sonaqube Analisis') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            environment {
+                scannerHome =  tool name: 'sonar', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+            }
+            steps {
+                script {
+                    sonarScanAarch64(CODE_BRANCH, ' -Dsonar.coverage.jacoco.xmlReportPaths=${WORKSPACE}${JACOCO_REPORT_PATH}')
+                }
+            }
+        }
+
+        stage('Build jar') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            steps {
+                script {
+                    eksBuild('gradle')
+                }
+            }
+        }
+
+        stage('Build image') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            steps {
+                script {
+                    dockerBuild.build()
+                }
+            }
+        }
+
+        stage('Push artifacts') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            steps {
+                script {
+                    eksPushArtifacts('build/libs/')
+                }
+            }
+        }
+
+        stage('Tag docker image') {
+            when {
+                allOf {
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(release|master)/ }
+                }
+            }
+            steps {
+                script {
+                    eksPullToPushTagDockerImage()
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            script {
+                sed.getCommit('SUCCESSFUL')
+            }
+        }
+        failure {
+            script {
+                sed.getCommit('FAILURE')
+            }
+        }
+        cleanup {
+            dockerClean()
+            cleanWs()
+        }
+    }
+}

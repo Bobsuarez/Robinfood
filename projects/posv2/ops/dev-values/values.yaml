@@ -1,0 +1,121 @@
+# Default values for project.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/posv2
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 0.1.21
+
+healthCheck:
+  enabled: true
+  path: /actuator/health
+
+#imagePullSecrets: []
+nameOverride: "dev-posv2-app"
+fullnameOverride: "dev-posv2-chart"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  #  annotations:
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "dev-posv2"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+# runAsUser: 1000
+
+service:
+  type: NodePort
+  port: 8080
+
+ingress:
+  enabled: true
+  className: "alb"
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+    alb.ingress.kubernetes.io/group.name: ingress-controller
+    alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+    alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+    alb.ingress.kubernetes.io/healthcheck-path: '/actuator/health'
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '200'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '120'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+    alb.ingress.kubernetes.io/success-codes: '200'
+  hosts:
+    - host: dev-posv2.rf-dev.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 400m
+    memory: 512Mi
+
+redis:
+  enabled: false
+
+appEnv:
+  - name: "SQUAD"
+    value: "pos"
+  - name: "APP"
+    value: "posv2"
+
+filebeatImage: 853324821382.dkr.ecr.us-east-1.amazonaws.com/filebeat:7.16.3-arm64
+filebeatEnv:
+  - name: "SQUAD"
+    value: "cai"
+  - name: "ENVIRONMENT"
+    value: "dev"
+  - name: "APP"
+    value: "posv2"
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  threshold: 10
+  metricName: "nginx_ingress_controller_requests"
+  prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80
+
+nodeSelector:
+  kube/nodetype: pos-arm
+
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "app"
+    effect: "NoSchedule"
+
+affinity: {}
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteMany
+  size: 50Gi
+  storageClassName: efs-logs

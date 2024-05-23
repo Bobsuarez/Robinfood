@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "servicesou.orderorlocalserver.fullname" . }}
+  labels:
+    {{- include "servicesou.orderorlocalserver.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.orderorlocalserver.autoscaling.enabled }}
+  replicas: {{ .Values.orderorlocalserver.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "servicesou.orderorlocalserver.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.orderorlocalserver.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "servicesou.orderorlocalserver.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.orderorlocalserver.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "servicesou.orderorlocalserver.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.orderorlocalserver.podSecurityContext | nindent 8 }}
+      containers:
+        - name: filebeat-sidecar
+          image: public.ecr.aws/d9e2y2w1/filebeat:7.16.3-arm
+          env:
+          {{- toYaml .Values.orderorlocalserver.filebeatEnv | nindent 12 }}
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs/
+            - name: filebeat-ou-config
+              mountPath: /usr/share/filebeat/filebeat.yml
+              subPath: filebeat.yml
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.orderorlocalserver.securityContext | nindent 12 }}
+          image: "{{ .Values.orderorlocalserver.image.repository }}:{{ .Values.orderorlocalserver.image.tag | default .Chart.AppVersion }}"
+          env:
+          {{- toYaml .Values.orderorlocalserver.appEnv | nindent 12 }}
+          imagePullPolicy: {{ .Values.orderorlocalserver.image.pullPolicy }}
+          {{- if .Values.orderorlocalserver.healthCheck.enabled }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: {{ .Values.orderorlocalserver.healthCheck.path }}
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 120
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - '-c'
+                - "curl localhost:8080{{ .Values.orderorlocalserver.healthCheck.path }}  | grep  status | grep UP"
+            failureThreshold: 3
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.orderorlocalserver.resources | nindent 12 }}
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs
+      volumes:
+        - name: filebeat-ou-config
+          configMap:
+            name: filebeat-ou-config
+            items:
+              - key: filebeat.yml
+                path: filebeat.yml
+        - name: logs
+        {{- if .Values.orderorlocalserver.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.orderorlocalserver.persistence.existingClaim | default (include "servicesou.orderorlocalserver.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.orderorlocalserver.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.orderorlocalserver.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.orderorlocalserver.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

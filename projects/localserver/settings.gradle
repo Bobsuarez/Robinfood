@@ -1,0 +1,11 @@
+rootProject.name = 'localserver'
+
+include 'app'
+include 'commons'
+include 'localprocessorder-or'
+include 'localstoreconfiguration-bc'
+include 'localserver-ad'
+include 'electronicbill-bc'
+include 'electronicbill-bc-saopaulo'
+include 'electronicbill-bc-response'
+include 'security-bc'

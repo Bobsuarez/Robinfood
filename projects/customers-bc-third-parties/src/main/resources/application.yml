@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: customers-bc-third-parties
+  config:
+    import:
+      - 'aws-parameterstore:'
+      - 'aws-parameterstore:/config/devops/apm/'
+      - 'aws-parameterstore:/config/devops/db/customers-bc-third-parties/'
+      - 'aws-parameterstore:/config/devops/jwt/'
+      - 'aws-parameterstore:/config/devops/sso/'
+
+aws:
+  paramstore:
+    enabled: true
+    prefix: /config
+    profileSeparator: '_'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health

@@ -1,0 +1,39 @@
+FROM openjdk:11
+
+# Instalar dependencias necesarias para AWS CLI
+RUN apt-get update && \
+    apt-get install -y curl unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+# Descargar e instalar AWS CLI v2
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm awscliv2.zip && \
+    rm -rf aws
+	
+# Verificar la instalación de AWS CLI
+RUN aws --version
+
+RUN aws configure list
+
+# Ejecutar el comando aws configure
+RUN aws configure set aws_access_key_id *****Clave**** && \
+    aws configure set aws_secret_access_key *****Clave**** && \
+    aws configure set default.region us-east-1
+
+RUN aws configure list
+
+
+COPY /order-bc/app/build/libs/*.jar /application/
+
+WORKDIR /application
+
+COPY order-bc-properties.txt /application
+
+RUN mv /application/order-bc-properties.txt /application/application.properties
+
+RUN ls
+
+# Ejecuta la aplicación al iniciar el contenedor
+CMD ["sh", "-c", "java -jar *.jar"]

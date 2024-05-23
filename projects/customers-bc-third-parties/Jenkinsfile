@@ -1,0 +1,155 @@
+@Library('jenkins-shared-libraries') _
+
+pipeline {
+    agent { kubernetes(k8sAgent(name: 'ubuntuarm64', jnlpImage: 'public.ecr.aws/d9e2y2w1/jenkins-inbound-agent:arm64')) }
+
+    triggers {
+        bitBucketTrigger credentialsId: '', triggers: [[$class: 'BitBucketPPRPullRequestTriggerFilter', actionFilter: [$class: 'BitBucketPPRPullRequestMergedActionFilter', allowedBranches: 'master']]]
+    }
+
+    tools {
+        maven 'maven3.9'
+        jdk 'OpenJDK-21-arm64'
+    }
+    
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    parameters {
+        string(
+            name: 'CODE_BRANCH',
+            defaultValue: '',
+            description: 'Code branch to deploy.'
+        )
+    }
+
+    environment {
+        PROJECT_KEY = 'customers-bc-third-parties'
+        REPOSITORY = "git@bitbucket.org:muytech/${PROJECT_KEY}.git"
+        REGION = 'us-east-1'
+        AWS_KEY_MUY_DEV = credentials('AWS_ACCESS_KEY_ROBINFOOD_DEV')
+        AWS_SECRET_MUY_DEV = credentials('AWS_SECRET_KEY_ROBINFOOD_DEV')
+        CODE_ARTIFACT_REPO = 'robinfood-artifacts'
+        SQUAD = 'ce'
+    }
+    
+    stages {  
+        stage('Pre-Config Pipeline') {
+            steps {
+                script { 
+                    eksPreConfigPipeline()
+                }
+            }
+        }
+
+        stage('Unit Test Execution') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            steps {
+                script {
+                    eksBuildTest()
+                }
+            }
+        }
+
+        stage('Sonaqube Analisis') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            steps {
+                script {
+                    sonarScanAarch64(CODE_BRANCH)
+                }
+            }
+        }
+
+        stage('Build jar') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            steps {
+                script {
+                    eksBuild()
+                }
+            }
+        }
+
+        stage('Build image') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            steps {
+                script {
+                    dockerBuild.buildNetworkHost()
+                }
+            }
+        }
+
+        stage('Push artifacts') {
+            when {
+                allOf {
+                    expression { opsChange == 'false' }
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(feat|feature)/ }
+                }
+            }
+            steps {
+                script {
+                    eksPushArtifacts()
+                }
+            }
+        }
+
+        stage('Tag docker image') {
+            when {
+                allOf {
+                    expression { env.CODE_BRANCH.toLowerCase() =~ /(release|master)/ }
+                }
+            }
+            steps {
+                script {
+                    eksPullToPushTagDockerImage()
+                }
+            }
+        }
+        
+        stage('Deploy on Argocd') {
+            steps {
+                script {
+                    deployArgoCDAarch64(PROJECT_KEY,TAG)
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            script {
+                sed.getCommit('SUCCESSFUL')
+            }
+        }
+        failure {
+            script {
+                sed.getCommit('FAILURE')
+            }
+        }
+        cleanup {
+            dockerClean()
+            cleanWs()
+        }
+    }
+}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="390.0" stylesheets="@../css/templateLocker.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.com.robinfood.queue.view.controller.ConfirmationController">
+   <children>
+      <Pane layoutX="13.0" layoutY="21.0" prefHeight="264.0" prefWidth="379.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <GridPane layoutX="1.0" layoutY="-1.0" prefHeight="290.0" prefWidth="390.0" styleClass="panel-shadow">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="180.0" minHeight="10.0" prefHeight="180.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="130.0" minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <GridPane prefHeight="188.0" prefWidth="366.0" styleClass="arrow">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="34.0" minHeight="10.0" percentHeight="15.0" prefHeight="17.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="76.0" minHeight="10.0" percentHeight="70.0" prefHeight="76.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="29.0" minHeight="10.0" percentHeight="20.0" prefHeight="19.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label fx:id="txtMessageInfo" alignment="CENTER" prefHeight="122.0" prefWidth="355.0" text="?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="1">
+                           <styleClass>
+                              <String fx:value="label-30" />
+                              <String fx:value="coolvetica-bold" />
+                           </styleClass>
+                        </Label>
+                     </children>
+                  </GridPane>
+                  <GridPane GridPane.rowIndex="1">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onCancel" prefHeight="65.0" prefWidth="170.0" styleClass="config_button_green" text="NO" />
+                        <Button mnemonicParsing="false" onAction="#onAccept" prefHeight="65.0" prefWidth="170.0" styleClass="config_button_red" text="SI" GridPane.columnIndex="1" />
+                     </children>
+                  </GridPane>
+               </children>
+            </GridPane>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.6.6'
+}
+
+group 'com.robinfood.localserver'
+def appVersion = '1.3.9'
+version appVersion
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    // Custom modules dependencies
+    implementation project(":commons")
+    implementation project(":localprocessorder-or")
+    implementation project(":localstoreconfiguration-bc")
+    implementation project(":localserver-ad")
+    implementation project(":electronicbill-bc")
+    implementation project(":electronicbill-bc-saopaulo")
+    implementation project(":electronicbill-bc-response")
+    implementation project(":security-bc")
+
+    // Apm
+    implementation 'co.elastic.apm:apm-agent-attach:1.30.0'
+
+    // logback
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.2'
+
+    //Sleuth
+    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:3.1.3'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testImplementation 'org.mockito:mockito-inline:4.3.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.6'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+}
+
+test {
+    useJUnitPlatform()
+}

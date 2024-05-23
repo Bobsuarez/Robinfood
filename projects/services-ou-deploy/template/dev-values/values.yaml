@@ -1,0 +1,636 @@
+# Default values for project.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+orderbc:
+  replicaCount: 1
+
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/order-bc
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1
+
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "dev-order-bc-app"
+  fullnameOverride: "dev-order-bc-chart"
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "dev-order-bc"
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+  # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+  # runAsUser: 1000
+
+  service:
+    type: NodePort
+    port: 8080
+
+  ingress:
+    enabled: true
+    className: "alb"
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: ingress-controller
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: '/actuator/health'
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '60'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '30'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+      - host: dev-order-bc.rf-dev.com
+        paths:
+          - path: /
+            pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 100m
+      memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "cai"
+    - name: "ENVIRONMENT"
+      value: "dev"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-cai.muy.com.co"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "order-bc-main"
+    - name: "MQ-SUFFIX"
+      value: "orders-main"
+    - name: "JAVA_OPTS"
+      value: "-Xms50m -Xmx512m"
+    - name: "REDIS_HOST"
+      value: "redis-eck.muy.com.co"
+    - name: "RD_KEY"
+      value: "cai"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    threshold: 5
+    metricName: "nginx_ingress_controller_requests"
+    prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80
+
+  nodeSelector:
+    kube/nodetype: CHANNEL-arm
+
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+
+ordercreation:
+  replicaCount: 1
+
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/order-creation
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1
+
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "dev-order-creation-app"
+  fullnameOverride: "dev-order-creation-chart"
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "dev-order-creation"
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+  # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+  # runAsUser: 1000
+
+  service:
+    type: NodePort
+    port: 8080
+
+  ingress:
+    enabled: true
+    className: "alb"
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: ingress-controller
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: '/actuator/health'
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '60'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '30'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+      - host: dev-order-creation.rf-dev.com
+        paths:
+          - path: /
+            pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 100m
+      memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "cai"
+    - name: "ENVIRONMENT"
+      value: "dev"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-cai.muy.com.co"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "order-creation-main"
+    - name: "MQ-SUFFIX"
+      value: "orders-main"
+    - name: "JAVA_OPTS"
+      value: "-Xms50m -Xmx512m"
+    - name: "REDIS_HOST"
+      value: "redis-eck.muy.com.co"
+    - name: "RD_KEY"
+      value: "cai"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  nodeSelector:
+    kube/nodetype: CHANNEL-arm
+
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+
+taxesbc:
+  replicaCount: 1
+
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/taxes-bc
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1
+
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "dev-taxes-bc-app"
+  fullnameOverride: "dev-taxes-bc-chart"
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "dev-taxes-bc"
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+  # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+  # runAsUser: 1000
+
+  service:
+    type: NodePort
+    port: 8080
+
+  ingress:
+    enabled: true
+    className: "alb"
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: ingress-controller
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: '/actuator/health'
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '60'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '30'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+      - host: dev-taxes-bc.rf-dev.com
+        paths:
+          - path: /
+            pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 100m
+      memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "cai"
+    - name: "ENVIRONMENT"
+      value: "dev"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-cai.muy.com.co"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "taxes-bc-main"
+    - name: "JAVA_OPTS"
+      value: "-Xms50m -Xmx512m"
+    - name: "REDIS_HOST"
+      value: "redis-eck.muy.com.co"
+    - name: "RD_KEY"
+      value: "cai"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    threshold: 10
+    metricName: "nginx_ingress_controller_requests"
+    prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80
+
+  nodeSelector:
+    kube/nodetype: CHANNEL-arm
+
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+
+ordercreationqueries:
+  replicaCount: 1
+
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/order-creation-queries
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 1.1.1
+
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "dev-order-creation-queries-app"
+  fullnameOverride: "dev-order-creation-queries-chart"
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "dev-order-creation-queries"
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+  # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+  # runAsUser: 1000
+
+  service:
+    type: NodePort
+    port: 8080
+
+  ingress:
+    enabled: true
+    className: "alb"
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: ingress-controller
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: '/actuator/health'
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '60'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '30'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+      - host: dev-order-creation-queries.rf-dev.com
+        paths:
+          - path: /
+            pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 100m
+      memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "cai"
+    - name: "ENVIRONMENT"
+      value: "dev"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-cai.muy.com.co"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "order-creation-queries-main"
+    - name: "JAVA_OPTS"
+      value: "-Xms50m -Xmx512m"
+    - name: "REDIS_HOST"
+      value: "redis-eck.muy.com.co"
+    - name: "RD_KEY"
+      value: "cai"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    threshold: 5
+    metricName: "nginx_ingress_controller_requests"
+    prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80
+
+  nodeSelector:
+    kube/nodetype: CHANNEL-arm
+
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+
+orderorlocalserver:
+  replicaCount: 1
+
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/order-or-localserver
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1
+
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+
+  #imagePullSecrets: []
+  nameOverride: "dev-order-or-localserver-app"
+  fullnameOverride: "dev-order-or-localserver-chart"
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: "dev-order-or-localserver"
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+  # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+  # runAsUser: 1000
+
+  service:
+    type: NodePort
+    port: 8080
+
+  ingress:
+    enabled: true
+    className: "alb"
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: ingress-controller
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: '/actuator/health'
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '60'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '30'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+      - host: dev-order-or-localserver.rf-dev.com
+        paths:
+          - path: /
+            pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 128Mi
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 100m
+      memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  redis:
+    enabled: false
+  env:
+    - name: "SQUAD"
+      value: "cai"
+    - name: "ENVIRONMENT"
+      value: "dev"
+    - name: "LOGSTASH_HOSTS"
+      value: "logstash-cai.muy.com.co"
+    - name: "PIPELINE"
+      value: "ecs-pipeline"
+    - name: "APP"
+      value: "order-or-localserver-main"
+    - name: "MQ-SUFFIX"
+      value: "orders-main"
+    - name: "JAVA_OPTS"
+      value: "-Xms50m -Xmx512m"
+    - name: "REDIS_HOST"
+      value: "redis-eck.muy.com.co"
+    - name: "RD_KEY"
+      value: "cai"
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  nodeSelector:
+    kube/nodetype: CHANNEL-arm
+
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "app"
+      effect: "NoSchedule"
+
+  affinity: {}
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs

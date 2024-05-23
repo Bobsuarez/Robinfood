@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: customers-bc-third-parties
+
+# LOGGING CONFIGURATION
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+    com.robinfood: INFO
+    root: INFO
+
+# SECURITY CONFIGURATION
+jwt-token-secret: TESTbGDq28dVXwPvuqtpvarJnBayrwQcFFdYVcMqYHTAcQrUeRhpd9jUats5CfhGaH9yN8JMrDXF879BW7pwTP9VJHwmQS87mJPHg8xzMjzM4SJxyrtmdy32RDc8A4v2bCebKFuFsL8gNmUaAkKrgWdATSUaUa4QU5bumbm7kb79kmCmmGqsxzTvAbFhhgJpy5zzEsDRmPrFsuDqVXF4TX9RTD7M3344BdJfzrG4VzJtkdYbSfsT9fdx3ehkTSmhJ8AjKvaLX9ujM6Uxy4NgMG9azgFChwndyz5Zfs85zBfK3u9eqPMSf5Mp2mfsqt6dkXY4WmRHJBJsazHDDD9gdXnuJxmPBeMMXFQKCanGscw5RgqSsceZdTQfkvspMGYZhcxhHxD97xxh9ccyUFbT5LvCCkVR9yQqCMLaDHGyCa5BBQ53fBxZWtMkn3Dq9R2qeHtBRCzkKhBczgm9beSQLP5Vp9G3HTubHAfCzwtc7mfLvkePCK8PZVSbn7k4PE3sCEzu
+
+authority:
+  type:
+    - scope: "service"
+    - scope: "public"
+    - scope: "internal"
+
+springdoc:
+  packagesToScan: com.robinfood.customersbc.thirdparties
+  paths-to-match: /**
+
+# Elastic APM
+elastic:
+  apm:
+    enabled: false
+    server_url: https://apm-url.com:443
+    service_name: customers-bc-third-parties
+    secret_token: APMSECRETTOKEN==
+    environment: dev
+    application_packages: com.robinfood
+    log_level: INFO

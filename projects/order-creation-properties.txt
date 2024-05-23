@@ -1,0 +1,128 @@
+server.port=8071
+spring.application.name=order-creation
+
+#Spring boot version 2.6.6
+spring.cloud.compatibility-verifier.enabled=false
+spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
+
+#JWT Token
+jwt-token-prefix=Bearer\u0020
+jwt.token.secret=gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+jwt-token-aud=internal
+jwt-token-mod=orch_order
+
+# Swagger
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=method
+springdoc.packagesToScan=com.robinfood.app.controllers
+
+# Urls
+url.configurations-bc=https://dev.configurations-bc.muydev.com/api/
+url.order-bc=http://order-bc:8070/api/
+url.order-bc-query=https://steamstable-order-bc-query.rf-dev.com/api/
+url.loyalty=https://dev.loyalty.muydev.com/api/
+url.services-bc=https://dev.services-bc.muydev.com/api/
+url.users-bc=https://dev.users-bc.muydev.com/api/
+url.payment-methods-bc=https://dev.paymentmethods-bc.muydev.com/api/
+url.coupon-system=https://dev.makeitrain.muydev.com/api/
+
+url.menu-base-admin-bc=https://steamstable-menu-bc-baseadmin.rf-dev.com/api/
+url.menu-base=https://steamstable-menu-bc-base.rf-dev.com/api/
+url.menu-bc=https://steamstable-menu-bc.rf-dev.com/api/
+url.store-configurations=https://dev.store-configurations.muydev.com/api/
+url.taxes-bc=http://taxes-bc:8073/api/
+url.co2-bc=https://dev.co2-bc.muydev.com/api/
+url.cubano-v2=https://dev.cubano.muydev.com/api/
+url.cubano=https://dev.cubano.muydev.com/api/
+url.order-syncdata-bc=https://order-bc-syncdata.muydev.com/api/
+url.token-to-business-capability=https://sso.muydev.com/
+url.order-billnumber-generator-bc=https://orderbillnumbergenerator-bc.rf-dev.com/
+
+
+#CORS
+spring.mvc.allowed-origin-bcc=*
+
+# Activemq
+activemq.paid-orders.topic=active-mq-order-bc
+spring.activemq.in-memory=false
+
+# ActiveMQ - Orders
+activemq-orders.broker-url=ssl://b-d8bb126e-a6c3-48ba-beab-2f19245e4ea3-1.mq.us-east-2.amazonaws.com:61617
+activemq-orders.user=orders-creations
+activemq-orders.password=jj0hHbUViAt43eim
+
+# ActiveMQ - Payment methods
+activemq-payment-methods.broker-url=ssl://b-ca102b0f-8889-49b2-9a5d-aaeb02801157-1.mq.us-east-2.amazonaws.com:61617
+activemq-payment-methods.user=paymentmethods-bc
+activemq-payment-methods.password=cU4Or94O9M8bvM1X
+
+
+#ActiveMQ - Topics - Queue
+activemq.orders-to-created.topic=Orders.ToCreate.Topic
+activemq.orders-response.topic=Orders.Response.Topic
+activemq.orders-change-status.queue=Rf.All.Order.OrdersChangeStatus.Queue
+activemq.orders-paymentmethods-transaction.queue=Rf.Co.Orders.TransactionStatusChanges.Queue
+activemq.orders-paymentmethods-refund.queue=Rf.All.PaymentMethods.Refunds.Queue
+
+# Payment method online
+payment-method.online-col=1
+payment-method.online-mx=2
+payment-method.online-bra=3
+
+#Payments
+payment.method-foodcoins-id=7
+payment.method-validation-service=4,5,6,10,11,24,25
+orders.payment-method-ids-to-service={4: 3, 6: 1, 23: 1, 24: 3, 25: 3, 5: 3,10:8, 11:8}
+orders.payment-method-ids={1: {4: 8, 6: 1, 23: 1, 5: 3, 11:8}, 5: {4: 3, 6: 1, 23: 1, 24: 3, 25: 3, 5: 3}}
+
+orders.payment-method-ids-to-service.col={4: 8, 6: 1, 23: 1, 5: 3,10:8, 11:8}
+orders.payment-method-ids-to-service.bra={4: 3, 6: 1, 23: 1, 24: 3, 25: 3, 5: 3}
+
+#Services
+taxe-service-mex=16
+taxe-service-col=8
+
+# Validate payment methods detail
+payment-methods-ids-allowed-to-validate-detail=4,5,6,9,10,11,12
+
+co2.validation.is-enabled=true
+
+# Redis
+spring.redis.host=redis
+spring.redis.port=6379
+token-to-business-capability.redis-id=service-token
+token-to-business-capability.issuer=backoffice.v1
+token-to-business-capability.auth-key=a84b111c-72f9-4bff-b276-2dc5f9d6db00
+token-to-business-capability.auth-secret=63eea6a47a4eae281b84496765d5b4f17e30ab0823ad5e5802ded73fb9d2b9787015183e20f166f4ac1f1f9ce1e12dac58202a79d0be9306824132ced54e9ac6
+server.error.include-message=always
+
+PROXY_REPOSITORY_AWS=https://robinfood-dev-824759482132.d.codeartifact.us-east-2.amazonaws.com/maven/gradle-plugins-store/
+PROXY_REPOSITORY_AWS_USER=aws
+PROXY_REPOSITORY_AWS_AUTH_TOKEN=eyJ2ZXIiOjEsImlzdSI6MTY1MjM3NDQ5NSwiZW5jIjoiQTEyOEdDTSIsInRhZyI6Ijl0N1dOOC1BeGFTM1pVSFVndkNLNGciLCJleHAiOjE2NTI0MTc2OTUsImFsZyI6IkExMjhHQ01LVyIsIml2IjoiMkdTQmVNWlB5d3liRE9QaiJ9.tYmTqKirWQHPpRBfbB90Kw.kRCkVV12qZ6kHcVM.0XpJYl1388n-WoEMFV5uvBQjRp5HPl9s7KSkgMm30Vpyc7_GK4Dbgm0doBtbkgBqdaLORbRL0QcZ96ec7Xme-feW6Ij7LVWhTqoxE-8yHkFs0nsku5Negvnlx4ojmNWIwptY-EsLAMFYMzoOAgeDwJQ7vsoo9oJTZQLWt_6saF8oXtexDCHNZm16J4IoS36-2fpQte7ZsOcRUsnhyX8QiEDCfDmjYclZ82H8zIP8wl-jGrZR1UvnImt9HRK-WfyTn98jhN4PO3qgMEDZP1dIkZ5V-ju7_7Gu9HVhx_ihqyVA5InWXq0KauPPIufmM8VYct4txcC8045lOpX9TLYdGIXQ7qhV5L_CT0RzhcmfUkwQP8OxGJGps9KeieajikRchQ530Pe7W96DqqQH2C8aORtfmuGeva90fLFDJnoYqPRGxj2T6-x0YrebqjJmUi7N7DvsfEMWKKQp-KpdO136gibT2WkFhcOu4CzrtU0BO7plutKnJVp-nu1xi777N3ZRPEMPF4zVBysy_z0OU8E_i7ljDg_EF8gr2avDxNotvMpcfVhzrx0Tz6bKHilwlcKj1fV3ktb09kOL5DLPWV73VEKyih0ashM0Zlek0YM1sSyFYAgs3ZuX9U_VQ5o5FAQ-5Cc5rpjMJSfvPbkfCS4BZI-f5xPi0S28vdb6lU2Q4Ija3eXwutfUsdZiyhQ4eQynHaxIwBu9sf8qkhUVwg1XLQJ9B84udD1v76KdQVoN1CXhyreL5gHglwbyg-n1XzdF39q8Tk6Dswv0tqmoyYt1h_rKVs0fygUDyyC_7rKcIADH6fXlvzPsTMrDQy4ecIorqtFIOMaFVR-F1pnC6WtqJGXKHOdMzqAMJ2ViLDC02dWuwTSFdbGO55zl4jAUJ-g9iAAriRnhb6t5V37PXiJKzXvVL63KyZB7BEqNQYvNTGKqqAcq8hZ4UsX4Xm23Rlai88_0yLWcMX_AtCmEzINNJ8M4c7ZiYCBukiXHLb7zMxHcBvz3HrF6umhKm3pdtUpgaMjyxSVwg5ZAWbo_7GySeMAUHRtMWjI35RtseHvg1RFKt40Uda55KwLNdtO7G7XqrZ6DY0XqKJilEz8NOqlTHoWhxWUtgZ6W5T-hathbAnIuq7-jS-qZw4iRF3_35fHCoRG9W7rqIAODZft5O_zq5GHzxo_Up_ec6vfDgW4uRUjXeUfSPYawcXLrZrsdDSkJhDhBURvHLe9MYEvAHP4Xx8l3kNH4H7F3rnNA0yRbnV5BTP_AQ0BWED5LlndbzRHts3AwM-dOrDGQNBzgmLq6Za_o18kJrRLoRfZoyMrVLKh2iS-0hscNxOdQlg6mRpNQ999hpj3Ah4psLGGqORePqn88zeTs8b4.tmfItF5ZMSVzCykKUE73Gw
+
+# Thread Pool
+thread.core-pool-size=5
+thread.max-pool-size=10
+thread.queue-capacity=1000
+
+#Elastic APM
+elastic.apm.enabled=false
+elastic.apm.server-url=https://c2d4e1292b6c4676afaa34a2fa9d0354.apm.us-east-1.aws.cloud.es.io:443
+elastic.apm.service-name=order-creation
+elastic.apm.secret-token=kCSbL2fhBD7T7mEajI
+elastic.apm.environment=dev
+elastic.apm.application-packages=com.robinfood.order-creation
+elastic.apm.log-level=INFO
+
+#Dynamo
+amazon.aws.accesskey=
+amazon.aws.secretkey=
+amazon.aws.region=us-east-2
+amazon.aws.dynamo.temporaryTransactionTableName=transaction-created-temporary
+
+orders.gift-card-payment-methods-ids={1: {26}, 5:{}}
+orders.gift-card-product-categories-ids=76
+orders.electronic-bill-store-ids=28 
+
+

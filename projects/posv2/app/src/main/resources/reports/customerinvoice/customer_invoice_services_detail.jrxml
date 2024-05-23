@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_invoice_services_detail" pageWidth="226" pageHeight="842" whenNoDataType="NoPages" columnWidth="216" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" isSummaryNewPage="true" uuid="52512a90-7911-4c71-83fd-9266bffe23d1">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nameItem" class="java.lang.String"/>
+	<field name="nameService" class="java.lang.String"/>
+	<field name="value" class="java.lang.String"/>
+	<group name="GroupService">
+		<groupExpression><![CDATA[$F{nameService}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<textField isBlankWhenNull="false">
+					<reportElement x="70" y="4" width="116" height="12" uuid="dbf62d84-3352-444b-9aec-aae0b3f09175">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true" isItalic="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nameService}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="8">
+				<staticText>
+					<reportElement x="-1" y="7" width="188" height="1" uuid="0558ec6b-57c2-43d4-8f43-3dc51e6a08ca">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.5" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<text><![CDATA[Static Text]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="12">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
+				<reportElement mode="Opaque" x="0" y="0" width="186" height="12" backcolor="#FFFFFF" uuid="a7e98a05-e3c6-429b-8406-2d0110897c7b"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[". . . . . . . . . . . . . . . . . . . . . . . . ."+$F{value}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="0" y="0" width="50" height="12" uuid="847d058c-faaf-46c9-bec8-e5f281e24549"/>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" mode="Transparent" x="40" y="0" width="110" height="12" uuid="c22d2112-8c10-41b1-b551-4c102ea93dac">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Bottom" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style backcolor=\"white\">" + $F{nameItem} + "</style>"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

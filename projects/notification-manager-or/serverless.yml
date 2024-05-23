@@ -1,0 +1,38 @@
+service: notification-manager-or
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: java11
+  stage: dev
+  region: us-east-1
+  environment:
+    URL_SSO: https://sso.muydev.com/
+    URL_ROUTING_INTEGRATION_BC: https://5sd1yo5b51.execute-api.us-east-1.amazonaws.com/api/
+    TOKEN_AUTH_SECRET: -- Token Secret --
+    TOKEN_ISSUER: backoffice.v1
+    AUTH_KEY: -- Auth Key --
+
+package:
+  artifact: target/notification-manager-or-dev.jar
+
+functions:
+  subscriber-change-status-pos:
+    handler: com.robinfood.handlers.SubscriberChangeStatusPosHandler
+    snapStart: true
+    timeout: 30
+    events:
+      - activemq:
+          arn: -- arn activeMQ--
+          basicAuthArn: -- basicAuthArn activeMQ--
+          queue: Rf.All.Notifications.OrderStatusChanged.MiddleLayer.Queue
+  subscriber-change-status-main:
+    handler: com.robinfood.handlers.SubscriberChangeStatusMainHandler
+    snapStart: true
+    timeout: 30
+    events:
+      - activemq:
+          arn: -- arn activeMQ--
+          basicAuthArn: -- basicAuthArn activeMQ--
+          queue: Rf.All.Notifications.OrderStatusChanged.MiddleLayer.Queue

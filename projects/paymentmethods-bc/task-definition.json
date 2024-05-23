@@ -1,0 +1,134 @@
+{
+  "executionRoleArn": "arn:aws:iam::824759482132:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/paymentmethods-bc-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "CODE_BRANCH"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "environment": [
+        {
+          "name": "VIRTUAL_HOST",
+          "value": "CODE_BRANCH.paymentmethods-bc.muydev.com"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "paymentmethods-bc-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/paymentmethods-bc:IMAGE_TAG",
+      "name": "paymentmethods-bc"
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/paymentmethods-bc-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "paymentmethods-bc-logstash"
+        }
+      },
+      "portMappings": [
+        {
+          "containerPort": 5044
+        }
+      ],
+      "environment": [
+        {
+          "name": "ES_HOSTS",
+          "value": "https://observability-372031.es.us-east-1.aws.found.io:9243"
+        },
+        {
+          "name": "xpack.monitoring.enabled",
+          "value": "false"
+        },
+        {
+          "name": "LOG_INDEX",
+          "value": "logs-ce-dev-paymentmethods-bc-%{+YYYY.MM.dd}"
+        },
+        {
+          "name": "ES_USER",
+          "value": "USERNAME"
+        },
+        {
+          "name": "ES_PASSWORD",
+          "value": "PASSWORD"
+        },
+        {
+          "name": "ILM_POLICY",
+          "value": "90-days"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/logstash:7.16.3-v1",
+      "essential": true,
+      "name": "logstash",
+      "healthCheck": {
+        "retries": 3,
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:9600/ || exit 1"
+        ],
+        "timeout": 5,
+        "interval": 30,
+        "startPeriod": 60
+      }
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/paymentmethods-bc-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "paymentmethods-bc-filebeat"
+        }
+      },
+      "environment": [
+        {
+          "name": "LOGSTASH_HOSTS",
+          "value": "localhost:5044"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "paymentmethods-bc-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/filebeat:7.16.3-v1",
+      "essential": true,
+      "name": "filebeat",
+      "dependsOn": [
+        {
+          "containerName": "logstash",
+          "condition": "HEALTHY"
+        }
+      ]
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::824759482132:role/paymentmethods-bc-role-dev",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "memory": "2048",
+  "family": "paymentmethods-bc",
+  "networkMode": "awsvpc",
+  "cpu": "1024",
+  "volumes": [
+    {
+      "name": "paymentmethods-bc-logs"
+    }
+  ]
+}

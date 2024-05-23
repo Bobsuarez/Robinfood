@@ -1,0 +1,85 @@
+service: orderposresolutions-bc
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: java11
+  snapStart: true
+  stage: dev
+  region: us-east-1
+  environment:
+    URL_DB: jdbc:mysql://ou-db-rw.muydev.com:3306/orders?zeroDateTimeBehavior=convertToNull&enabledTLSProtocols=TLSv1.2
+    USERNAME_DB:
+    PASSWORD_DB:
+    DRIVER_CLASS_NAME_DB: com.mysql.jdbc.Driver
+    JWT_TOKEN_SECRET: gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+
+plugins:
+  - serverless-domain-manager
+
+package:
+  artifact: target/orderposresolutions-bc-dev.jar
+
+functions:
+  createResolution:
+    timeout: 30
+    snapStart: true
+    handler: com.robinfood.handlers.CreateResolutionHandler
+    events:
+      - httpApi:
+          path: /api/v1/pos/stores/resolutions
+          method: post
+  enabledDisabledResolution:
+    timeout: 30
+    snapStart: true
+    handler: com.robinfood.handlers.EnabledDisabledResolutionHandler
+    events:
+      - httpApi:
+          path: /api/v1/pos/stores/resolutions/{resolutionId}/active
+          method: patch
+  updateResolution:
+    timeout: 30
+    snapStart: true
+    handler: com.robinfood.handlers.UpdateResolutionHandler
+    events:
+      - httpApi:
+          path: /api/v1/pos/stores/resolutions/{resolutionId}
+          method: put
+
+  updateResolutionByPos:
+    timeout: 30
+    snapStart: true
+    handler: com.robinfood.handlers.UpdateResolutionWithPosHandler
+    events:
+      - httpApi:
+          path: /api/v1/resolution/{id}/pos/{posId}
+          method: put
+
+  findAllResolutions:
+    timeout: 30
+    snapStart: true
+    handler: com.robinfood.handlers.FindAllResolutionHandler
+    events:
+      - httpApi:
+          path: /api/v1/resolutions/all
+          method: get
+          request:
+            parameters:
+              querystrings:
+                page: true
+                size: true
+                status: false
+                valueCustomFilter: false
+                orderByEndDateResolution: false
+                withPos: false
+                resolutionId: false
+custom:
+  customDomain:
+    http:
+      domainName: orderposresolutions-bc.rf-dev.com
+      basePath: ''
+      stage: $default
+      certificateName: '*.rf-dev.com'
+      createRoute53Record: true
+      endpointType: 'regional'

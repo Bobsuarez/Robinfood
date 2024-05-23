@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+group 'com.robinfood.localserver'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Springboot
+    api 'org.springframework.boot:spring-boot-starter:2.6.6'
+    api 'org.springframework.boot:spring-boot-starter-web:2.6.6'
+
+    //Redis
+    api 'org.springframework.boot:spring-boot-starter-data-redis:2.6.6'
+
+    // Validation
+     api 'org.springframework.boot:spring-boot-starter-validation:2.6.6'
+
+    //Mongo
+    api 'org.springframework.boot:spring-boot-starter-data-mongodb:2.6.6'
+
+    // Redis
+    api 'redis.clients:jedis:3.7.1'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+
+    // Mapper
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    implementation 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
+
+    // Feign
+    api 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.1'
+    api 'io.github.openfeign:feign-okhttp:11.8'
+    api 'io.github.openfeign:feign-jackson:11.8'
+    api 'io.github.openfeign:feign-gson:11.8'
+
+    // XML Mapper
+    api 'javax.xml.bind:jaxb-api:2.3.1'
+    api 'com.google.guava:guava:31.1-jre'
+    api 'com.sun.xml.bind:jaxb-impl:3.0.2'
+    api 'com.flextrade.jfixture:jfixture:2.7.2'
+    api 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
+    api 'jakarta.activation:jakarta.activation-api:2.1.0'
+    api 'org.json:json:20180813'
+
+    // Log
+    api 'org.springframework.cloud:spring-cloud-starter-sleuth:3.1.1'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.6'
+    testImplementation 'junit:junit:4.13.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar.enabled(true)

@@ -1,0 +1,13 @@
+{{- if and .Values.changestatusbc.persistence.enabled (not .Values.changestatusbc.persistence.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "changestatus.changestatusbc.fullname" . }}
+spec:
+  accessModes:
+    - {{ .Values.changestatusbc.persistence.accessMode | quote }}
+  storageClassName: {{ .Values.changestatusbc.persistence.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.changestatusbc.persistence.size | quote }}
+{{- end -}}

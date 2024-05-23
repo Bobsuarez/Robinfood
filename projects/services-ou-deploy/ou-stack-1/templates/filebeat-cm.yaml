@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-ou-stack-1-config
+data:
+  filebeat.yml: |
+    filebeat.inputs:
+     - type: log
+       enabled: true
+       fields_under_root: true
+       paths:
+         - /tmp/logs/*.log
+       fields:
+         squad: '${SQUAD}'
+         app: '${APP}'
+         service_name: '${APP}'
+         environment: '${ENVIRONMENT}'
+         service_environment: '${ENVIRONMENT}'
+       multiline.pattern: '^{'
+       multiline.negate: true
+       multiline.match: after
+       processors:
+         - decode_json_fields:
+             fields: ["message", "eventLog", "eventMessage"]
+             target: "json"
+
+    output.kafka:
+      hosts: ["kafka-devops.robinfood.cloud:9094"]
+      topic: 'logs-${SQUAD}-${ENVIRONMENT}-${APP}'
+      codec.json:
+        pretty: false
+
+    processors:
+    - add_docker_metadata:
+        host: "unix:///host_docker/docker.sock"

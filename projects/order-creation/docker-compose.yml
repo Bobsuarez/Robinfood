@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  sonarqube:
+    image: sonarqube:lts
+    ports:
+      - 9000:9000
+  posv2:
+    container_name: order-creation
+    build:
+      context: order-creation
+      dockerfile: Dockerfile
+    environment:
+      - ORDER_CREATION_MYSQL_HOST=${DOCKER_GATEWAY_HOST:-host.docker.internal}
+    network:
+      - posv2-network
+    ports:
+      - '8095:8080'
+    restart: always
+    volumes:
+      - ./order-creation:/order-creation
+    working_dir: /order-creation
+volumes:
+  dbdata:
+    driver: local
+networks:
+  posv2-network:
+    driver: bridge

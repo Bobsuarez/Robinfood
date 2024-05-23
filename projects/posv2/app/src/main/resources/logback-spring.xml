@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include
+            resource="org/springframework/boot/logging/logback/base.xml"/>
+    <springProperty scope="context" name="orderCreationQueries" source="spring.application.name"/>
+    <property resource="application.properties"/>
+    <property name="HOME_LOG_PATH" value="/tmp/logs/"/>
+    <contextName>${spring.application.name}</contextName>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${HOME_LOG_PATH}/posv2.log</file>
+        <append>false</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${HOME_LOG_PATH}/hist/posv2.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>1</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder
+                class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <fieldName>timestamp</fieldName>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <!-- 2020-05-12 01:57:14,029 - werkzeug - INFO - 172.22.0.1 - - [12/May/2020 01:57:14] "GET /favicon.ico HTTP/1.1" 404 - | elasticapm transaction.id=f31f884b961a6089 trace.id=02bd57be0eff9979c94951d0d53e80c0 span.id=None -->
+                <pattern>
+                    <pattern>
+                        {
+                        "level":"%level",
+                        "app":"%contextName",
+                        "logger_name":"%logger",
+                        "instance":"localhost",
+                        "type":"log",
+                        "plataform":"orderCreationQueries",
+                        "parent": "%X{parentSpanId:-}"
+                        }
+                    </pattern>
+                </pattern>
+                <stackTrace>
+                    <fieldName>stacktrace</fieldName>
+                </stackTrace>
+                <message>
+                    <fieldName>message</fieldName>
+                </message>
+                <mdc />
+                <arguments>
+                    <includeNonStructuredArguments>false</includeNonStructuredArguments>
+                    <nonStructuredArgumentsFieldPrefix>arg</nonStructuredArgumentsFieldPrefix>
+                </arguments>
+            </providers>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

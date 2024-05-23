@@ -1,0 +1,12 @@
+{{- if .Values.taxesbc.serviceAccount.create -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "servicesou.taxesbc.serviceAccountName" . }}
+  labels:
+    {{- include "servicesou.taxesbc.labels" . | nindent 4 }}
+  {{- with .Values.taxesbc.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

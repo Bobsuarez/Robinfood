@@ -1,0 +1,55 @@
+spring.application.name=users-bc
+server.port=8080
+spring.main.banner-mode=off
+
+#CONFIGURACION BASE DE DATOS MYSQL
+spring.jpa.database=default
+spring.jpa.hibernate.ddl-auto=none
+#PRIMARY DATASOURCE:
+spring.datasource.sgi.initialization-mode=never
+spring.datasource.sgi.jdbc-url=jdbc:mysql://main.db.muydev.com:3306/sgi?enabledTLSProtocols=TLSv1.2
+spring.datasource.sgi.username=sgi
+spring.datasource.sgi.password=yDbVbBMyDrF2aruZ
+#MUY DATASOURCE:
+spring.datasource.muy.initialization-mode=never
+spring.datasource.muy.jdbc-url=jdbc:mysql://main.db.muydev.com:3306/muy?enabledTLSProtocols=TLSv1.2
+spring.datasource.muy.username=users-bc
+spring.datasource.muy.password=z2hweLQ7FPYhqAFxRHF4XKn9HmCWckqT
+
+#CONFIGURACIONES JPA PARA AMBIENTE PRODUCTIVO
+spring.jpa.hibernate.use-new-id-generator-mappings=false
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true
+spring.jpa.show-sql=false
+
+#CONFIGURACION LOGGIN
+logging.level.org.apache.http=INFO
+logging.level.httpclient.wire=INFO
+logging.level.com.robinfood=INFO
+
+# SWAGGER
+springdoc.api-docs.path=/api-docs
+springdoc.show-actuator=false
+springdoc.packages-to-scan=com.robinfood.users.bc
+
+###########SECURITY##########################
+auth.jwt-key=gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+
+###########PERMITE INACTIVAR TODA  LA  SEGURIDAD##########################
+# spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
+users.bc.x-user-key.token=tMNQTdj4q7RcBVxY6A!Dmz&kbsnBay$b$LG4Zr7aBMkx+?Ym3hYyyx4m3*J8vYeaXY&9GC$f+!k9AWcztKF4Y$@ZDRHzYF?me?s_YXBDf?mmE5L7w?%D8Y!R6?uDW%2
+
+security.encryption.public-key=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxFFNeVkZgZ7W/0m9OSjRj3R7Rulau3jiitawQ7y3j4bsCfF4HKlsfJxBRC4UVJ67cj+ESJsb1/62YWmmxJRxFpBteZJeoifsTgGY5eoV5kd7rt+8S09ErzaZmDRZmZMq4sUwVy2mYfIC9FEWJXYS0rl1mEXthy/uitGfzzkZ/8895bkTsK5Z/ENOStnmbMO/7kTkV5cRE4r8Ndxc5jsgwK02eX7dlau1CjHNSygcBPlh1m9gyxCVRhrJa6oxbc0+5Ty08n7oIo0A/mQ5s8vuTtWvPORLQ4UAAiJCG1R10cS+MnMEZ3ITaq2rKOEaePZf/e2knQhM3Rs432xWHDHXkQIDAQAB
+security.encryption.private-key=MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDEUU15WRmBntb/Sb05KNGPdHtG6Vq7eOKK1rBDvLePhuwJ8XgcqWx8nEFELhRUnrtyP4RImxvX/rZhaabElHEWkG15kl6iJ+xOAZjl6hXmR3uu37xLT0SvNpmYNFmZkyrixTBXLaZh8gL0URYldhLSuXWYRe2HL+6K0Z/PORn/zz3luROwrln8Q05K2eZsw7/uRORXlxETivw13FzmOyDArTZ5ft2Vq7UKMc1LKBwE+WHWb2DLEJVGGslrqjFtzT7lPLTyfugijQD+ZDmzy+5O1a885EtDhQACIkIbVHXRxL4ycwRnchNqraso4Rp49l/97aSdCEzdGzjfbFYcMdeRAgMBAAECggEAchiyh0lCarQvTjXEFNllWhOfpinvgq+SMpDt5qBiqrcGrgy5+yZ4l7+UqxSA2mFand7Oeggz2Yf+5YSq2OtRAoU0KwjnmSTM0NVa0J0I10pKVutPmxFZ4N9By1T5kikXLq7eFnzAi4JFN0t9LI6ACBqjfrl9gClaYTHNyHjuZF4+Q+tCfuPkksY1vboVBA6oyxrjVggan/OALMfLL0E6CZ92xTazdv5TMDZurDT2IcnM06gFKK2issEHli2KX5kQGqbeWdEnAidJ08dnS35E4Y1g6ISxS+lnjZWTiZcOuWvQRFwbDy7g2waNRZ+UrlDVbSePsy3dTpYUO/aFNDB+AQKBgQD/4zFjZZwf/grOkHo7CfnpxNZeAJ60PaL/dBPqiGzmh2T4GyNlM2CqjmdgW9HOm5KoEiqn0EhjKy0SEnG+afiQnYQhjgAvujYd9H5Ie4/NO81V+a5T2figPVrwZ5FDyz/N5qbMYkGjEARNuzgdl9J2+zhO26ChdBOyFAyYBgjLcQKBgQDEZ2dL//5vvnIU9QDIX4EFa2NWf913lBXrIeGqH9WSVqE/nvGkV43hjh8owix89xbZE8RDb7JqtSqNpkAMESK4syUAIqbW+tScpeuYHmUqbLJzLgdRCLuezJnggRn/Dl9ljR4bHGJXwWyqKXgEDTNKMOjFxWZ03ZIYv+OoDM5+IQKBgAMvoP3L1hXP4/KOefciOKpgeQrSlydHXTAxEc5pxHFaXjd4nwgzi5CUFVVtzz7zUPAmycEtJrmVYApJkID+cMncLDj+u6Hcf6//y1K7tx6nD/dyFGmW3TGhkfBMWdKuRS0bIhiJYKfXGzacjiZQLZ6tohXZRja8a0JcXYvHB3UBAoGBALcGqZOAdwqJTmTLQLR5k5GKVqNYOvlhbd+VzmcsjWl3A4N3SjZdRSHJwK3J7Y1y8b7PldlGMN0SARrJr+vO2C2I/FUY9aNnUlS8pkU3Jg2YB+AgJ79TRQyiHE/D34b5TNsk28Zl+BtRbENSq74S0xYzZ+hNocIMbUZVJAEKFjAhAoGBAJDEaE5b7oT9ekWFdHZsLeHyzb+8arGFaNlFZ5EVqfBVSpIY3jHxI9oNF4N+8I5XB0S872IAY6447h8/7wNBAkMMPR+pd6cF6Gwv33ezfu+slXig54785zLdFeAU8KCkBATkgWkUprLfSaeANLjCBhv4gfiVAiiKMrUZHwvYfpsm
+
+dynamo-ttl-time-min=1
+
+#APM
+elastic.apm.enabled=false
+elastic.apm.server_urls=https://c2d4e1292b6c4676afaa34a2fa9d0354.apm.us-east-1.aws.cloud.es.io:443
+elastic.apm.service_name=users-bc
+elastic.apm.secret_token=kCSbL2fhBD7T7mEajI
+elastic.apm.environment=dev
+elastic.apm.application_packages=com.robinfood.users.bc
+elastic.apm.log_level=INFO

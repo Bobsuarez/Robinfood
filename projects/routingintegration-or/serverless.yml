@@ -1,0 +1,26 @@
+service: routingintegration-or
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: java11
+  region: us-east-1
+  stage: dev
+  environment:
+    JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+    URL_ROUTING_INTEGRATION_BC_API: -- URL_ROUTING_INTEGRATION_BC_API --
+    JWT_TOKEN_SECRET: -- JWT_TOKEN_SECRET --
+
+package:
+  artifact: target/routingintegration-or-dev.jar
+
+functions:
+  getRoutingIntegration:
+    timeout: 30
+    snapStart: true
+    handler: com.robinfood.handlers.RoutingIntegrationHandler
+    events:
+      - httpApi:
+          path: /api/v1/orders/change-status
+          method: post

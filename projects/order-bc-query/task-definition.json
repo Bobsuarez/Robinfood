@@ -1,0 +1,75 @@
+{
+  "executionRoleArn": "arn:aws:iam::824759482132:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/order-bc-query-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "CODE_BRANCH"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "environment": [
+        {
+          "name": "VIRTUAL_HOST",
+          "value": "CODE_BRANCH.order-bc-query.muydev.com"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "order-bc-query-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/order-bc-query:IMAGE_TAG",
+      "name": "order-bc-query"
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/order-bc-query-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "order-bc-query-filebeat"
+        }
+      },
+      "environment": [
+        {
+          "name": "LOGSTASH_HOSTS",
+          "value": "logstash.muydev.com:5044"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "order-bc-query-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/filebeat:7.16.3-v1",
+      "essential": false,
+      "memory": 64,
+      "name": "filebeat"
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::824759482132:role/order-bc-query-role-dev",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "memory": "3072",
+  "family": "order-bc-query",
+  "networkMode": "awsvpc",
+  "cpu": "1024",
+  "volumes": [
+    {
+      "name": "order-bc-query-logs"
+    }
+  ]
+}

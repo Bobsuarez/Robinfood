@@ -1,0 +1,34 @@
+{
+  "name": "localserver-ad",
+  "version": "1.0.0",
+  "description": "Initial commit",
+  "main": "handler.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://herneygr@bitbucket.org/muytech/localserver-ad.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/muytech/localserver-ad#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1082.0",
+    "lodash": "^4.17.21",
+    "serverless-domain-manager": "^6.0.3"
+  },
+  "devDependencies": {
+    "coverage-node": "^6.1.0",
+    "jest": "^27.5.1",
+    "jest-sonar-reporter": "^2.0.0",
+    "ts-jest": "^27.1.3"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "timers": "fake",
+    "collectCoverage": true
+  }
+}

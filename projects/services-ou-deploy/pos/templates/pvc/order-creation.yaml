@@ -1,0 +1,13 @@
+{{- if and .Values.ordercreation.persistence.enabled (not .Values.ordercreation.persistence.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "servicesou.ordercreation.fullname" . }}
+spec:
+  accessModes:
+    - {{ .Values.ordercreation.persistence.accessMode | quote }}
+  storageClassName: {{ .Values.ordercreation.persistence.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.ordercreation.persistence.size | quote }}
+{{- end -}}

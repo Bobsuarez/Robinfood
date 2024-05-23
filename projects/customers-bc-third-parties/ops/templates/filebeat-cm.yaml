@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.nameOverride }}-config
+data:
+{{- if .Values.redis.enabled }}
+  filebeat.yml: |
+    filebeat.inputs:
+      - type: log
+        enabled: true
+        fields_under_root: true
+        multiline:
+          match: after
+          negate: true
+          pattern: '^\['
+        paths:
+          - /tmp/logs/*.log
+        fields:
+          squad: '${SQUAD}'
+          app: '${APP}'
+          environment: '${ENVIRONMENT}'
+
+    output.redis:
+      hosts: ['${REDIS_HOST}']
+      password: "ukHVef2qWAm0vmuYQ30ILljB"
+      key: '${RD_KEY}'
+      db: 0
+      timeout: 5
+      enabled: true
+
+    processors:
+    - add_docker_metadata:
+        host: "unix:///host_docker/docker.sock"
+{{- else }}
+  filebeat.yml: |
+    filebeat.inputs:
+      - type: log
+        enabled: true
+        fields_under_root: true
+        multiline:
+          match: after
+          negate: true
+          pattern: '^\['
+        paths:
+          - /tmp/logs/*.log
+        fields:
+          squad: '${SQUAD}'
+          app: '${APP}'
+          environment: '${ENVIRONMENT}'
+
+    output.logstash:
+      hosts: ['${LOGSTASH_HOSTS}']
+      pipeline: '${PIPELINE}'
+      enabled: true
+      ssl.enabled: true
+      ssl.certificate_authorities: ["/etc/certs/ca-cert.crt"]
+      ssl.certificate: "/etc/certs/filebeat-cert.crt"
+      ssl.key: "/etc/certs/filebeat-key.key"
+
+    processors:
+    - add_docker_metadata:
+        host: "unix:///host_docker/docker.sock"
+{{- end }}

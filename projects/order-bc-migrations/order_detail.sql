@@ -1,0 +1,23 @@
+CREATE TABLE `order_detail` (
+  `order_id` int(10) unsigned NOT NULL COMMENT 'Id de la orden (Relación virtual tabla -orders- BD ORDERS)',
+  `invoice` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Numero factura de venta',
+  `billing_resolution_id` int(10) unsigned NOT NULL COMMENT 'Id de la resolución (Relación virtual con tabla -resolutions- de SGI)',
+  `menu_id` int(10) unsigned DEFAULT NULL COMMENT 'Id del menú de selección de la orden (Relación virtual con tabla -menu- de SGI)',
+  `final_products_price` decimal(13,4) unsigned NOT NULL COMMENT 'Valor de los productos finales de la orden',
+  `additional_products_price` decimal(13,4) unsigned NOT NULL COMMENT 'Valor de los productos que se adicionen a la orden',
+  `services_price` decimal(13,4) unsigned NOT NULL COMMENT 'Valor del los servicios adicionales que aplique. Por ejemplo: Domicilio',
+  `discount_price` decimal(13,4) unsigned NOT NULL COMMENT 'Valor de descuentos aplicados',
+  `base_price_nt` decimal(13,4) unsigned NOT NULL COMMENT 'Valor de la orden sin impuestos (final_products_price + additional_products_price)',
+  `base_tax_price` decimal(13,4) unsigned NOT NULL COMMENT 'Impuestos de la orden (aplicados a base_price_nt)',
+  `service_price_nt` decimal(13,4) unsigned NOT NULL COMMENT 'Valor del los servicios adicionales SIN impuestos',
+  `service_tax_price` decimal(13,4) unsigned NOT NULL COMMENT 'Valor del los impuestos de los servicios',
+  `notes` text COLLATE utf8mb4_unicode_ci COMMENT 'Notas asociadas a la orden',
+  `has_consumption` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'If the order has consumption tax applied or not',
+  `consumption_value` decimal(13,4) NOT NULL DEFAULT '0.0000' COMMENT 'If has_consumption is true, then this column should have the value itself',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`order_id`),
+  KEY `order_detail_billing_resolution_id_index` (`billing_resolution_id`),
+  KEY `order_detail_menu_id_index` (`menu_id`),
+  KEY `order_detail_has_consumption_index` (`has_consumption`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

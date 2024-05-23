@@ -1,0 +1,84 @@
+@Library('jenkins-shared-libraries') _
+
+pipeline {
+    agent { kubernetes(k8sAgent(name: 'ubuntuarm64', jnlpImage: 'public.ecr.aws/d9e2y2w1/jenkins-inbound-agent:arm64')) }
+    
+    triggers {
+        bitBucketTrigger credentialsId: '', triggers: [[$class: 'BitBucketPPRPullRequestTriggerFilter', actionFilter: [$class: 'BitBucketPPRPullRequestMergedActionFilter', allowedBranches: 'master']]]
+    }
+    
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    parameters {
+        string(
+            name: 'CODE_BRANCH',
+            defaultValue: 'feat-eks',
+            description: 'Code branch to deploy.'
+        )
+        choice(
+            name: 'CHANNEL',
+            choices: [
+                'pos',
+                'ou-stack-1'
+            ],
+            description: ''
+        )
+    }
+
+    environment {
+        PROJECT_KEY = 'services-changestatus-deploy'
+        REPOSITORY = "git@bitbucket.org:muytech/${PROJECT_KEY}.git"
+        REGION = 'us-east-1'
+        AWS_KEY_MUY_DEV = credentials('AWS_ACCESS_KEY_ROBINFOOD_DEV')
+        AWS_SECRET_MUY_DEV = credentials('AWS_SECRET_KEY_ROBINFOOD_DEV')
+        SERVICES = "changestatusbc,changestatusor"
+    }
+    
+    stages {  
+        stage('Pre-Config Pipeline') {
+            steps {
+                script { 
+                    dir('values'){
+                        sh "git config --global --add safe.directory /home/jenkins/agent/workspace/services-changestatus/values"
+                        git branch: CODE_BRANCH, url: 'git@bitbucket.org:muytech/services-changestatus', credentialsId: 'ssh-bitbucket'
+                        //files = sh(script: 'git diff --name-only HEAD~', returnStdout: true).trim()
+                        files = "${CHANNEL}/values-dev.yaml"
+                        print(files)
+                    }
+                    dir('deploy'){
+                        eksPreConfigPipeline('deploy',true)
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy on Argocd') {
+            steps {
+                script {
+                    dir('deploy'){
+                        deployArgoChartsAarch64(getChannels(files), getVersions(files))
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                sed.getCommit('SUCCESSFUL')
+            }
+        }
+        failure {
+            script {
+                sed.getCommit('FAILURE')
+            }
+        }
+        cleanup {
+            dockerClean()
+            cleanWs()
+        }
+    }
+}

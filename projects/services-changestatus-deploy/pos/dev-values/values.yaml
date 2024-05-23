@@ -1,0 +1,166 @@
+changestatusbc:
+  replicaCount: 1
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/changestatus-bc
+    pullPolicy: Always
+    tag: 0.0.5-SNAPSHOT
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+  nameOverride: dev-changestatus-bc-app
+  fullnameOverride: dev-changestatus-bc-chart
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: dev-changestatus-bc
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: dev-changestatus-bc.rf-dev.com
+    hosts:
+    - host: dev-changestatus-bc.rf-dev.com
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+    tls:
+    - secretName: rf-dev.com-tls
+    - hosts:
+      - '*.rf-dev.com'
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+  redis:
+    enabled: false
+  env:
+  - name: SQUAD
+    value: cai
+  - name: ENVIRONMENT
+    value: k8senv
+  - name: LOGSTASH_HOSTS
+    value: logstash-cai.muy.com.co
+  - name: PIPELINE
+    value: ecs-pipeline
+  - name: APP
+    value: changestatus-bc-stack-2
+  - name: JAVA_OPTS
+    value: -Xmx512m
+  - name: REDIS_HOST
+    value: redis-eck.muy.com.co
+  - name: RD_KEY
+    value: cai
+  - name: JAVA_OPTS
+    value: -Xms100m -Xmx512m
+  - name: MQ-SUFFIX
+    value: orders-ou
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 80
+  nodeSelector:
+    kube/nodetype: pos-arm
+  tolerations:
+  - key: dedicated
+    operator: Equal
+    value: app
+    effect: NoSchedule
+  affinity: {}
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+changestatusor:
+  replicaCount: 1
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/changestatus-or
+    pullPolicy: Always
+    tag: 0.0.9-SNAPSHOT
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+  nameOverride: dev-changestatus-or-app
+  fullnameOverride: dev-changestatus-or-chart
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: dev-changestatus-or
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: dev-changestatus-or.rf-dev.com
+    hosts:
+    - host: dev-changestatus-or.rf-dev.com
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+    tls:
+    - secretName: rf-dev.com-tls
+    - hosts:
+      - '*.rf-dev.com'
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+  redis:
+    enabled: false
+  env:
+  - name: SQUAD
+    value: cai
+  - name: ENVIRONMENT
+    value: k8senv
+  - name: LOGSTASH_HOSTS
+    value: logstash-cai.muy.com.co
+  - name: PIPELINE
+    value: ecs-pipeline
+  - name: APP
+    value: changestatus-or-stack-2
+  - name: JAVA_OPTS
+    value: -Xmx512m
+  - name: REDIS_HOST
+    value: redis-eck.muy.com.co
+  - name: RD_KEY
+    value: cai
+  - name: JAVA_OPTS
+    value: -Xms100m -Xmx512m
+  - name: MQ-SUFFIX
+    value: orders-ou
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 80
+  nodeSelector:
+    kube/nodetype: pos-arm
+  tolerations:
+  - key: dedicated
+    operator: Equal
+    value: app
+    effect: NoSchedule
+  affinity: {}
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs

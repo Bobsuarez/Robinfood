@@ -1,0 +1,70 @@
+server.port=8080
+
+# Server configuration
+server.servlet.encoding.charset=UTF-8
+server.servlet.encoding.force=true
+
+#JWT Token
+jwt-token-prefix=Bearer\u0020
+jwt.token.secret=gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+jwt-token-aud=internal
+jwt-token-aud-service=service
+jwt-token-mod=posv2
+
+# Swagger
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=method
+springdoc.packagesToScan=com.robinfood.app.controllers
+
+#Generic Data base connection info
+app.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+url.orderCreationQueries=https://steamstable-pos-order-creation-queries.rf-dev.com/api/
+url.orderCreation=https://steamstable-pos-order-creation.rf-dev.com/api//api/
+url.menuBC=https://steamstable-menu-or.rf-dev.com/api/
+url.menuBase=https://steamstable-menu-bc-base.rf-dev.com/api/
+url.paymentMethodsOR=https://dev.paymentmethods-or.muydev.com/api/
+url.storeOr_ch=https://dev.store-or.muydev.com/api/
+
+url.integrationsBackoffice=https://dev.integrationsbackoffice-or.muydev.com/api/
+url.coupons=https://dev.coupons-or.muydev.com/api/
+url.rickOr=https://dev.pos.muydev.com/api/
+url.ramOr=https://dev.ram-or.muydev.com/ram/api/
+
+#Cross selling config
+app.cross-selling-brands=1
+app.cross-selling-desserts-halls=5
+app.cross-selling-drinks-halls=4
+app.cross-selling-desserts-groups=103,263,343,346
+app.cross-selling-drinks-groups=6,97,105,219,286,342,344
+
+#Elastic APM
+elastic.apm.enabled=false
+elastic.apm.server-url=https://observability-apm.muy.com.co:443
+elastic.apm.service-name=posv2
+elastic.apm.secret-token=WDhMR0s0a0J4X0FONlFfVE5yR3c6elpMck5JZThTWEtlNml3MDlnTVhqQQ==
+elastic.apm.environment=dev
+elastic.apm.application-packages=com.robinfood.posv2
+elastic.apm.log-level=INFO
+
+# Redis
+spring.redis.host=rcache.vxyisi.ng.0001.use2.cache.amazonaws.com
+spring.redis.port=6379
+ram-functionalities.redis-id=service-ram-functionalities
+
+
+orders.displayTypes-giftCard=5
+orders.paymentMethod-giftCard=26
+
+#store cross-selling
+app.cross-selling-store=27
+
+#grupo adiciones
+app.cross-selling-toppings-groups=11
+
+#mas vendidos
+app.cross-selling-top-toppings=1376,1377,1352,1191,771,4444
+app.cross-selling-second-timer-popup=7
+app.cross-selling-start-time-popup=15
+app.cross-selling-end-time-popup=23

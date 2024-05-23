@@ -1,0 +1,53 @@
+#Connection Mongo DB
+spring.data.mongodb.host=localhost
+spring.data.mongodb.port=27017
+spring.data.mongodb.database=local_configuration
+spring.data.mongodb.username=root
+spring.data.mongodb.password=12345
+logging.level.org.mongodb=warn
+
+
+#Crons
+spring.enable.scheduling=true
+scheduler.cron.store-configuration=0 1/60 * * * *
+scheduler.timezone.store-configuration=America/Bogota
+scheduler.store-id=281
+
+#Network
+feign.client.url.localserver_ch=XXXXXXXX
+feign.client.url.sathub=http:XXXXXXXX
+feign.client.url.print-local-server=XXXXXXXX
+feign.client.url.electronicbilldigitalsign=XXXXXXXX
+feign.client.url.sso=XXXXXXXXXXX
+feign.client.url.orderorqueries=XXXXXXX
+
+# WebSocketClient Properties
+websocket.client.server_endpoint=XXXXXXXX
+websocket.client.id=XXXXXXX
+websocket.client.secret=XXXXXXXX
+websocket.client.storeid=96
+websocket.client.pingintervalms=570000
+
+# Locale
+app.locale.language=pt
+app.locale.country=br
+
+# Spring global configurations
+spring.cloud.loadbalancer.ribbon.enable=false
+spring.main.allow-bean-definition-overriding=true
+
+logging.level.root=DEBUG
+logging.file.name=/Users/robinfood/logs/localserver.log
+spring.application.name=localserver
+
+# Credentials sso
+sso.credentials.email=HCY0lEyhD6TdWHSqaEQCu8BThhQbugTH7xEqVqcrsEJ/fYs+xMZ0BC8hMSdM8m27yWWMKQuVlT0rxw7ujcsdoTOKGyrfbiYrQQqwcmlB1/GGlPQ5i8N6PLKgh6f8EsaEgDZbQF367clsDGwbDXGFExpCHVPan8leAyYhpvpjBimTI+/4shYRNhdxUDJIKhmb+7Wo6WZ+T5TQLrSixBWSQOs1/o024QXRonAi60p5peYTyi6PQd244U4od+prWVHlNf2bYABWV63LI5O4LfiOAs8dg09t5hruCBYrPqsPwnuFyd4YXiolCD4SWvPqebobpMuYaOX+DBAD1o1VyPoDbw==
+sso.credentials.password=wDONg0ty+JTCQ4z4w8v2ITLBnODmwddWEPqdPfOntKnil8LSb7ccLu8Ouxh4kv+7Bz4zzSf0on5Y1owaZfJO57F3DAxJJ0+bGonk/lCTmoBAehh565mZoVwvzgWDL+IxqCPBbhqLgUMLzaAP4irYzNKRMyphadU/g4dD2NjmiRF5reY+yK83blaQoTAsvnOCLzYGVSI9myE4hGDzRiBU+QT9rWE4wMxvWTjPUFrfIfcqOUG6t8PteKnd/HcbXgjanP5ErkH03CwRcUbK35eljq6LDK473xSsRA8DNoFR1Ugn4sGpadoOaceRJy04aJVH5TZTJT2oJLKgw0BDopxGdg==
+sso.authorization.apptoken=b6825c37880cd6625c9c5ce6677c303e027e8fae6ca7e88cd564d3788cd38b9982fd4eece7148e79b255ccc254c6316c00e93a74199baf10123d4d15538a3ce2
+sso.authorization.appid=print-local-service
+sso.authorization.scopes=menu_b,menu_base,MENU_DISCOUNTS_SERVICES,posv2,order_creation_queries,order_creation,order_bc
+
+spring.redis.host=localhost
+spring.redis.port=6379
+token-to-orchestrator.redis-id=service-token-localserver
+token-to-orchestrator.issuer=backoffice.v1

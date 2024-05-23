@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_daily_voucher_payment_method_title_mx" pageWidth="555" pageHeight="842" whenNoDataType="NoPages" columnWidth="535" leftMargin="10" rightMargin="10" topMargin="5" bottomMargin="5" uuid="52512a90-7911-4c71-83fd-9266bffe23d1">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="totalCompensation" class="java.lang.Double"/>
+	<field name="totalOwnIncome" class="java.lang.Double"/>
+	<field name="subReportPayment" class="java.io.InputStream"/>
+	<field name="listPaymentDet" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<subreport>
+				<reportElement positionType="Float" x="0" y="3" width="535" height="20" isPrintWhenDetailOverflows="true" uuid="34c189b7-f75b-4615-9c2f-84b393e0adc3"/>
+				<dataSourceExpression><![CDATA[$F{listPaymentDet}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$F{subReportPayment}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<summary>
+		<band height="50">
+			<staticText>
+				<reportElement x="80" y="2" width="200" height="20" uuid="70cf93f2-e14b-40ee-a2a2-7a23745d8a22"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total compensación CO2]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight" pattern="$#,##0.00;$-#,##0.00">
+				<reportElement x="280" y="2" width="200" height="20" isRemoveLineWhenBlank="true" uuid="98de6135-1758-47ac-bd77-e408fbf73bed"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalCompensation}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="22" width="200" height="20" uuid="7de5e9b0-9ad9-440e-8962-f7270d7781ba"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total ingreso propio]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight" pattern="$#,##0.00;$-#,##0.00">
+				<reportElement x="280" y="22" width="200" height="20" isRemoveLineWhenBlank="true" uuid="e41bdbae-6189-45f0-b8d6-96922f91d6c7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalOwnIncome}]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement mode="Transparent" x="0" y="46" width="535" height="1" isPrintWhenDetailOverflows="true" uuid="bb22649d-2df0-4090-af30-69d4ace7eceb"/>
+			</break>
+		</band>
+	</summary>
+</jasperReport>

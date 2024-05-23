@@ -1,0 +1,19 @@
+---
+filebeat.inputs:
+  - type: log   
+    enabled: true
+    fields_under_root: true
+    multiline:
+      match: after
+      negate: true
+      pattern: '^\['
+    paths:
+      - /usr/share/filebeat/logs/paymentmethods-bc.log
+    
+output.logstash:
+  hosts: ["${LOGSTASH_HOSTS}"]
+
+processors:
+  - add_docker_metadata:
+      host: "unix:///host_docker/docker.sock"
+

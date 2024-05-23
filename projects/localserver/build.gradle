@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+group 'com.robinfood.localserver'
+def appVersion = '1.3.9'
+version appVersion
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+    testRuntimeOnly project(":localserver-ad")
+}
+
+subprojects {
+
+    apply plugin: 'jacoco'
+    apply plugin: 'java'
+
+    test {
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport // report is always generated after tests run
+    }
+
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.enabled true
+            xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+            csv.enabled false
+            html.destination file("${buildDir}/reports/jacoco/test/jacocoHtml")
+        }
+    }
+}
+
+task jacocoMergedReport(type: JacocoReport) {
+    dependsOn = subprojects.jacocoTestReport
+    additionalSourceDirs.setFrom files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories.setFrom files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories.setFrom files(subprojects.sourceSets.main.output)
+    executionData.setFrom project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
+    reports {
+        xml.enabled true
+        xml.destination layout.buildDirectory.dir('reports/jacoco/test/jacocoTestReport.xml').get().asFile
+        csv.enabled false
+        html.enabled true
+    }
+}
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoMergedReport // report is always generated after tests run
+}

@@ -1,0 +1,95 @@
+{
+  "executionRoleArn": "arn:aws:iam::824759482132:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/order-creation-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "CODE_BRANCH"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "environment": [
+        {
+          "name": "VIRTUAL_HOST",
+          "value": "CODE_BRANCH.order-creation.muydev.com"
+        },
+        {
+          "name": "JAVA_OPTS",
+          "value": "-Xms128m -Xmx2048m"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "order-creation-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/order-creation:IMAGE_TAG",
+      "name": "order-creation"
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/order-creation-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "order-creation-filebeat"
+        }
+      },
+      "environment": [
+        {
+          "name": "LOGSTASH_HOSTS",
+          "value": "logstash.muydev.com:5044"
+        },
+        {
+          "name": "SQUAD",
+          "value": "SQUAD_NAME"
+        },
+        {
+          "name": "APP",
+          "value": "APP_NAME"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "value": "FILEBEAT_ENVIRONMENT"
+        },
+        {
+          "name": "PIPELINE",
+          "value": "ecs-pipeline"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "order-creation-logs",
+          "containerPath": "/tmp/logs"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/filebeat:7.16.3-ssl",
+      "essential": false,
+      "memory": 64,
+      "name": "filebeat"
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::824759482132:role/order-creation-role-dev",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "memory": "2048",
+  "family": "order-creation",
+  "networkMode": "awsvpc",
+  "cpu": "1024",
+  "volumes": [
+    {
+      "name": "order-creation-logs"
+    }
+  ]
+}

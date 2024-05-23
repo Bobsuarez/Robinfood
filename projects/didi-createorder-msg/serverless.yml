@@ -1,0 +1,63 @@
+service: didi-createorder-msg
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: java11
+  region: us-east-1
+  environment:
+    AUTH_KEY: --- Devops----
+    AWS_ACCESS_KEY_DIDI: --- Devops----
+    AWS_REGION_DIDI: us-east-1
+    AWS_SECRET_KEY_DIDI: --- Devops----
+    AWS_SQS_POINT_URL: https://sqs.us-east-1.amazonaws.com/853324821382/RF_All_Order_To_Create_Didi.fifo
+    JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+    JWT_TOKEN_SECRET: --- Devops----
+    TOKEN_AUTH_SECRET: --- Devops----
+    TOKEN_ISSUER: backoffice.v1
+    URL_SSO: https://sso.muydev.com/v1/services
+    URL_STACK_SECOND: https://steamstable-pos-order-creation.rf-dev.com/
+
+package:
+  artifact: target/didi-createorder-msg-dev.jar
+
+functions:
+  createOrder-msg-pub-didi:
+    timeout: 10
+    snapStart: true
+    handler: com.robinfood.handlers.ResponseOrderMsgPubDidiHandler
+    events:
+      - httpApi:
+          path: /api/v1/didi/create_order_msg
+          method: post
+  createOrder-msg-sub-didi:
+    handler: com.robinfood.handlers.ResponseOrderMsgSubDidiHandler
+    snapStart: true
+    timeout: 10
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - QueueCreate
+              - Arn
+
+resources:
+  Resources:
+    QueueCreate:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "RF_All_Order_To_Create_Didi.fifo"
+        FifoQueue: true
+        ContentBasedDeduplication: true
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt DeadLetterMessagesQueue.Arn
+          maxReceiveCount: 3
+        VisibilityTimeout: 5
+    DeadLetterMessagesQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: DLQ_RF_All_Order_To_Create_Didi.fifo
+        FifoQueue: true
+        MessageRetentionPeriod: 172800
+        ContentBasedDeduplication: true

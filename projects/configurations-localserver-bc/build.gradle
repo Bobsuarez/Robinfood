@@ -1,0 +1,99 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.6'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'jacoco'
+}
+
+group = 'com.robinfood'
+version = '0.1.4-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Springboot
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    //Config Server
+    implementation "io.awspring.cloud:spring-cloud-starter-aws-parameter-store-config:2.4.1"
+    implementation "io.awspring.cloud:spring-cloud-aws-autoconfigure:2.4.1"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:2.7.1"
+    implementation "io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.1"
+
+    implementation 'org.jetbrains:annotations:23.0.0'
+
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
+
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.6'
+
+    //Test
+    testImplementation 'org.mockito:mockito-inline:4.4.0'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
+    //jwt
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+
+    // Validation Hibernate
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+
+    //jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'mysql:mysql-connector-java'
+
+    // APM
+    implementation group: 'co.elastic.apm', name: 'apm-agent-attach', version: '1.32.0'
+    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
+    implementation group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.7'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.3'
+
+    // logback
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.2'
+
+    //Sleuth
+    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:3.1.3'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled(true)
+        html.enabled(true)
+    }
+}
+
+apply plugin : "io.spring.dependency-management"
+
+dependencyManagement {
+    imports{
+        mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:2.4.1"
+    }
+}

@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "servicesou.orderbc.fullname" . }}
+  labels:
+    {{- include "servicesou.orderbc.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.orderbc.autoscaling.enabled }}
+  replicas: {{ .Values.orderbc.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "servicesou.orderbc.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.orderbc.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "servicesou.orderbc.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.orderbc.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "servicesou.orderbc.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.orderbc.podSecurityContext | nindent 8 }}
+      containers:
+        - name: filebeat-sidecar
+          image: {{ .Values.orderbc.filebeatImage }}
+          env:
+          {{- toYaml .Values.orderbc.filebeatEnv | nindent 12 }}
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+            limits:
+              cpu: 2000m
+              memory: 2048Mi
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs/
+            - name: filebeat-ou-pos-config
+              mountPath: /usr/share/filebeat/filebeat.yml
+              subPath: filebeat.yml
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.orderbc.securityContext | nindent 12 }}
+          image: "{{ .Values.orderbc.image.repository }}:{{ .Values.orderbc.image.tag | default .Chart.AppVersion }}"
+          env:
+          {{- toYaml .Values.orderbc.appEnv | nindent 12 }}
+          imagePullPolicy: {{ .Values.orderbc.image.pullPolicy }}
+          {{- if .Values.orderbc.healthCheck.enabled }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: {{ .Values.orderbc.healthCheck.path }}
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 120
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - '-c'
+                - "curl localhost:8080{{ .Values.orderbc.healthCheck.path }}  | grep  status | grep UP"
+            failureThreshold: 3
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.orderbc.resources | nindent 12 }}
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs
+      volumes:
+        - name: filebeat-ou-pos-config
+          configMap:
+            name: filebeat-ou-pos-config
+            items:
+              - key: filebeat.yml
+                path: filebeat.yml
+        - name: logs
+        {{- if .Values.orderbc.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.orderbc.persistence.existingClaim | default (include "servicesou.orderbc.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.orderbc.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.orderbc.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.orderbc.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

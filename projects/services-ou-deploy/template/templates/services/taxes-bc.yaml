@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "servicesou.taxesbc.fullname" . }}
+  labels:
+    {{- include "servicesou.taxesbc.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.taxesbc.service.type }}
+  ports:
+    - port: {{ .Values.taxesbc.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "servicesou.taxesbc.selectorLabels" . | nindent 4 }}

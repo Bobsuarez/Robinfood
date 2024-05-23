@@ -1,0 +1,24 @@
+{{- if .Values.taxesbc.autoscaling.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "servicesou.taxesbc.fullname" . }}
+  labels:
+    {{- include "servicesou.taxesbc.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "servicesou.taxesbc.fullname" . }}
+  minReplicaCount: {{ .Values.taxesbc.autoscaling.minReplicas }}
+  maxReplicaCount: {{ .Values.taxesbc.autoscaling.maxReplicas }}
+  triggers:
+  {{- if .Values.taxesbc.autoscaling.threshold }}
+  - type: prometheus
+    metadata:
+      serverAddress: {{ .Values.taxesbc.autoscaling.prometheusUrl }}
+      metricName: {{ .Values.taxesbc.autoscaling.metricName }}
+      query: sum(rate({{ .Values.taxesbc.autoscaling.metricName }}{service="{{ .Values.taxesbc.fullnameOverride }}"}[2m]))
+      threshold: "{{ .Values.taxesbc.autoscaling.threshold }}"
+  {{- end }}
+{{- end }}

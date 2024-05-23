@@ -1,0 +1,52 @@
+server.port=8080
+
+server.error.include-stacktrace=never
+server.error.include-message=always
+
+#JWT Token
+jwt-token-prefix=Bearer\u0020
+jwt-token-secret=gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+jwt-token-aud=internal
+jwt-token-mod=order_creation_queries
+
+# Swagger
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=method
+springdoc.packagesToScan=com.robinfood.app.controllers
+
+url.orderBc=https://dev.order-bc.muydev.com/api/
+url.MenuBc=https://steamstable-menu-bc.rf-dev.com/api/
+url.Loyalty=https://dev.loyalty.muydev.com/api/
+url.configurationBc=https://dev.configurations-bc.muydev.com/api/
+url.billingBc=https://dev.billing-bc.muydev.com/api/
+url.serviceBc=https://dev.services-bc.muydev.com/api/
+url.orderBcQueries=https://dev.order-bc-query.muydev.com/api/
+url.lambdaExchangesBc=https://lambdaexchanges-bc.muydev.com/api/
+url.userBc=https://dev.users-bc.muydev.com/api/
+
+spring.application.name = orderCreationQueries
+url.sso=https://sso.muydev.com/
+
+spring.redis.host=rcache.vxyisi.ng.0001.use2.cache.amazonaws.com
+spring.redis.port=6379
+token-to-business-capability.auth-secret=31ead7a3483bc73623a84962fd6cd4291ea1b6190b7f14d79ca2c6f91e260a8ca02d1c7fce3ec77f71d9284ed983b02edf351adbb82a93a21caedbe50094a388
+token-to-business-capability.redis-id=service-token
+token-to-business-capability.issuer=backoffice.v1
+token-to-business-capability.auth-key=b6d6334b-90a1-4588-8db3-3d8fe41dba36
+
+logging.level.com.amazonaws.util.EC2MetadataUtils=error
+logging.level.com.amazonaws.internal.InstanceMetadataServiceResourceFetcher=error
+
+#Spring boot version 2.6.6
+spring.cloud.compatibility-verifier.enabled=false
+spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
+
+#Elastic APM
+elastic.apm.enabled=false
+elastic.apm.server-url=https://c2d4e1292b6c4676afaa34a2fa9d0354.apm.us-east-1.aws.cloud.es.io:443
+elastic.apm.service-name=order-creation-queries
+elastic.apm.secret-token=kCSbL2fhBD7T7mEajI
+elastic.apm.environment=dev
+elastic.apm.application-packages=com.robinfood.order-creation-queries
+elastic.apm.log-level=INFO

@@ -1,0 +1,32 @@
+# Servlet path
+server.port=8073
+server.servlet.context-path=/api
+
+# Swagger
+springdoc.swagger-ui.path=docs
+swagger.server.url=/api
+
+#Primary DataSource - TAXES
+spring.jpa.database-platform=org.hibernate.dialect.MySQL5InnoDBDialect
+spring.jpa.hibernate.ddl-auto=none
+spring.datasource.url=jdbc:mysql://ou-db-rw.muydev.com :3306/taxes?enabledTLSProtocols=TLSv1.2
+spring.datasource.username=taxes
+spring.datasource.password=CpsQ3hJac2dUcMbR
+
+# Logs
+spring.application.name=TAXES-BC
+spring.main.banner-mode=OFF
+logging.level.com.robinfood=TRACE
+
+# Security
+jwt.token.aud=internal,service
+jwt.token.secret=gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+jwt.token.mod=taxesBc
+
+elastic.apm.enabled=false
+elastic.apm.server-url=https://c2d4e1292b6c4676afaa34a2fa9d0354.apm.us-east-1.aws.cloud.es.io:443
+elastic.apm.service-name=taxes-bc
+elastic.apm.secret-token=kCSbL2fhBD7T7mEajI
+elastic.apm.environment=dev
+elastic.apm.application-packages=com.robinfood.taxes-bc
+elastic.apm.log-level=INFO

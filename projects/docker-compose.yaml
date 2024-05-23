@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+  order-bc:
+    container_name: order-bc
+    build:
+      context: .
+      dockerfile: Dockerfile-order-bc
+    ports:
+      - "8070:8070"
+    depends_on:
+      - redis
+    volumes:
+      - order-bc:/data
+
+  order-creation:
+    container_name: order-creation
+    build:
+      context: .
+      dockerfile: Dockerfile-order-creation
+    ports:
+      - "8071:8071"
+    links:
+      - order-bc
+      - taxes-bc
+    depends_on:
+      - redis
+    volumes:
+      - order-creation:/data
+      
+  taxes-bc:
+   container_name: taxes-bc
+   build:
+     context: .
+     dockerfile: Dockerfile-taxes-bc
+   ports:
+     - "8073:8073"
+   depends_on:
+      - redis
+   volumes:
+      - taxes-bc:/data
+
+  redis:
+    image: redis
+    restart: always
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+
+volumes:
+  redis:
+    driver: local
+  order-creation:
+    driver: local
+  order-bc:
+    driver: local
+  taxes-bc:
+    driver: local

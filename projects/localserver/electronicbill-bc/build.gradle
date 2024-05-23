@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+group 'com.robinfood.localserver'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Springboot
+    api 'org.springframework.boot:spring-boot-starter:2.6.6'
+    api 'org.springframework.boot:spring-boot-starter-web:2.6.6'
+
+    //Redis
+    //api 'org.springframework.boot:spring-boot-starter-data-redis:2.6.6'
+
+    //Validation
+    //api 'org.springframework.boot:spring-boot-starter-validation:2.6.6'
+
+    //Mongo
+    api 'org.springframework.boot:spring-boot-starter-data-mongodb:2.6.6'
+
+    // Redis
+    //api 'redis.clients:jedis:4.1.1'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+
+    // Mapper
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    implementation 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
+
+    // Feign
+    api 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.1'
+    api 'io.github.openfeign:feign-okhttp:11.8'
+    api 'io.github.openfeign:feign-jackson:11.8'
+    api 'io.github.openfeign:feign-gson:11.8'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.6'
+    testImplementation 'junit:junit:4.13.2'
+
+    // Custom modules dependencies
+    implementation project(':commons')
+    implementation project(":electronicbill-bc-saopaulo")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar.enabled(true)

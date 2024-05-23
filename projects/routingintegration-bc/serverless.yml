@@ -1,0 +1,61 @@
+service: routingintegration-bc
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: java11
+  region: us-east-1
+  environment:
+    URL_DB: jdbc:mysql://ou-db-rw.muydev.com:3306/routing_integrations?zeroDateTimeBehavior=convertToNull&enabledTLSProtocols=TLSv1.2
+    USERNAME_DB: -- User BD --
+    PASSWORD_DB: -- Password BD --
+    DRIVER_CLASS_NAME_DB: com.mysql.cj.jdbc.Driver
+    LOGIN_TIME_OUT_DB: 10
+    JWT_TOKEN_SECRET: -- Token Secret --
+    JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+
+package:
+  artifact: target/routing-bc-dev.jar
+
+functions:
+  searchToRules:
+    timeout: 15
+    snapStart: true
+    handler: com.robinfood.handlers.RoutingHandler
+    events:
+      - httpApi:
+          path: /api/v1/channel/{id}/flow/{code}/route
+          method: get
+  searchToSubscribers:
+    timeout: 15
+    snapStart: true
+    handler: com.robinfood.handlers.SubscribersHandler
+    events:
+      - httpApi:
+          path: /api/v1/flow/{code}/channel/{id}/subscribers
+          method: get
+  searchToEvents:
+    timeout: 15
+    snapStart: true
+    handler: com.robinfood.handlers.EventHandler
+    events:
+      - httpApi:
+          path: /api/v1/events
+          method: post
+  searchToEventHistory:
+    timeout: 15
+    snapStart: true
+    handler: com.robinfood.handlers.SubscriberEventHistoryLogsHandler
+    events:
+      - httpApi:
+          path: /api/v1/events/history
+          method: post
+  searchToEventFlow:
+    timeout: 15
+    snapStart: true
+    handler: com.robinfood.handlers.EventFlowHandler
+    events:
+      - httpApi:
+          path: /api/v1/event/{id}/flow/{code}
+          method: get

@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "servicesou.taxesbc.fullname" . }}
+  labels:
+    {{- include "servicesou.taxesbc.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.taxesbc.autoscaling.enabled }}
+  replicas: {{ .Values.taxesbc.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "servicesou.taxesbc.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.taxesbc.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "servicesou.taxesbc.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.taxesbc.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "servicesou.taxesbc.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.taxesbc.podSecurityContext | nindent 8 }}
+      containers:
+        - name: filebeat-sidecar
+          image: {{ .Values.taxesbc.filebeatImage }}
+          env:
+          {{- toYaml .Values.taxesbc.filebeatEnv | nindent 12 }}
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs/
+            - name: filebeat-ou-stack-1-config
+              mountPath: /usr/share/filebeat/filebeat.yml
+              subPath: filebeat.yml
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.taxesbc.securityContext | nindent 12 }}
+          image: "{{ .Values.taxesbc.image.repository }}:{{ .Values.taxesbc.image.tag | default .Chart.AppVersion }}"
+          env:
+          {{- toYaml .Values.taxesbc.appEnv | nindent 12 }}
+          imagePullPolicy: {{ .Values.taxesbc.image.pullPolicy }}
+          {{- if .Values.taxesbc.healthCheck.enabled }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: {{ .Values.taxesbc.healthCheck.path }}
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 120
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - '-c'
+                - "curl localhost:8080{{ .Values.taxesbc.healthCheck.path }}  | grep  status | grep UP"
+            failureThreshold: 3
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.taxesbc.resources | nindent 12 }}
+          volumeMounts:
+            - name: logs
+              mountPath: /tmp/logs
+      volumes:
+        - name: filebeat-ou-stack-1-config
+          configMap:
+            name: filebeat-ou-stack-1-config
+            items:
+              - key: filebeat.yml
+                path: filebeat.yml
+        - name: logs
+        {{- if .Values.taxesbc.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.taxesbc.persistence.existingClaim | default (include "servicesou.taxesbc.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.taxesbc.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.taxesbc.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.taxesbc.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

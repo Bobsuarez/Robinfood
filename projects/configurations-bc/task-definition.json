@@ -1,0 +1,36 @@
+{
+  "executionRoleArn": "arn:aws:iam::824759482132:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/configurations-bc-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "CODE_BRANCH"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "environment": [
+        {
+          "name": "VIRTUAL_HOST",
+          "value": "CODE_BRANCH.configurations-bc.muydev.com"
+        }
+      ],
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/configurations-bc:IMAGE_TAG",
+      "essential": true,
+      "name": "configurations-bc"
+    }
+  ],
+  "memory": "1024",
+  "taskRoleArn": "arn:aws:iam::824759482132:role/configurations-bc-role-dev",
+  "family": "configurations-bc",
+  "networkMode": "awsvpc",
+  "cpu": "512"
+}

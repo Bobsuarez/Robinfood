@@ -1,0 +1,64 @@
+service: order-simbaconnector-bc
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  stage: dev
+  runtime: java21
+  region: us-east-1
+  configValidationMode: error
+  deploymentBucket:
+    name: rf-dev-serverlessdeploymentbuck
+  environment:
+    JWT_TOKEN_SECRET: gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+    JWT_TOKEN_AUD: service
+    JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+    ENVIRONMENT_TYPE: 2
+    COMPANY_TOKEN: D909D74C-14A2-40CE-A2B8-7F6DE54AA542
+    COMPANY_PASSWORD: xxxxxx
+    EMAIL: facturacion@robinfood.com
+    BASE_SIMBA_URL: https://fe2.simba.co/API_NOMINA/
+    API_SIMBA: api/FacturaElectronica/EnviarFacturaElectronica
+    URL_QR: https://catalogo-vpfe-hab.dian.gov.co/document/searchqr?documentkey=
+
+plugins:
+  - serverless-domain-manager
+  - serverless-deployment-bucket
+
+package:
+  artifact: target/order-simbaconnector-bc.jar
+  patterns:
+    - '!tmp/**'
+    - '!.git/**'
+    - '.DS_Store'
+    - 'target/classes/**'
+    - 'target/test-classes/**'
+    - 'target/site/**'
+    - 'META-INF/maven/**'
+    - 'META-INF/MANIFEST.MF'
+    - 'META-INF/DEPENDENCIES'
+    - 'lib/**'
+    - 'log4j.properties'
+    - 'logback.xml'
+
+functions:
+  sendElectronicInvoiceToSimba:
+    timeout: 15
+    snapStart: true
+    handler: com.robinfood.handlers.SendElectronicInvoiceToSimbaHandler
+    events:
+      - httpApi:
+          path: /v1/send-electronic-bill
+          method: post
+
+custom:
+  customDomain:
+    http:
+      domainName: ordersimbaconnector-bc.rf-dev.com
+      basePath: ''
+      stage: ${self:provider.stage}
+      certificateName: '*.rf-dev.com'
+      createRoute53Record: true
+      endpointType: 'regional'
+      securityPolicy: tls_1_2

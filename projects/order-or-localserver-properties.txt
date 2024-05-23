@@ -1,0 +1,85 @@
+server.port=8585
+# Error handling
+server.error.include-stacktrace=never
+server.error.include-message=always
+
+# JWT Token
+jwt-token-prefix=Bearer
+jwt.token.secret=gyXNfCp4Qx4Gn9OV7qK7uwRUX4f4bgrEEPvjdeLQFciHwtCKrc5rCm1kuNECIFP6
+jwt-token-aud=internal
+jwt-token-mod=order_or_localserver
+spring.application.name=order-or-localserver
+
+
+# Swagger
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=method
+springdoc.packagesToScan=com.robinfood.app.controllers
+
+# Redis
+spring.redis.host=localhost
+spring.redis.port=6379
+
+
+token-to-business-capability.auth-secret=31ead7a3483bc73623a84962fd6cd4291ea1b6190b7f14d79ca2c6f91e260a8ca02d1c7fce3ec77f71d9284ed983b02edf351adbb82a93a21caedbe50094a388
+token-to-business-capability.redis-id=service-token
+token-to-business-capability.issuer=backoffice.v1
+token-to-business-capability.auth-key=b6d6334b-90a1-4588-8db3-3d8fe41dba36
+logging.level.com.amazonaws.util.EC2MetadataUtils=error
+logging.level.com.amazonaws.internal.InstanceMetadataServiceResourceFetcher=error
+
+# SQS
+cloud.aws.region.use-default-aws-region-chain=true
+cloud.aws.region.static=us-east-2
+cloud.aws.region.auto=false
+cloud.aws.stack.auto=false
+cloud.aws.stack=false
+cloud.aws.credentials.access-key=
+cloud.aws.credentials.secret-key=
+cloud.aws.end-point.url=https://sqs.us-east-2.amazonaws.com/824759482132/Rf_Co_OrderBilling_Queue.fifo
+
+#Elastic APM
+elastic.apm.enabled=true
+elastic.apm.server-url=https://c2d4e1292b6c4676afaa34a2fa9d0354.apm.us-east-1.aws.cloud.es.io:443
+elastic.apm.service-name=order-or-localserver
+elastic.apm.secret-token=kCSbL2fhBD7T7mEajI
+elastic.apm.environment=dev
+elastic.apm.application-packages=com.robinfood.order-or-localserver
+elastic.apm.log-level=INFO
+
+#ActiveMQ
+
+#/config/mq/orders
+activemq-orders.broker-url=ssl://b-d8bb126e-a6c3-48ba-beab-2f19245e4ea3-1.mq.us-east-2.amazonaws.com:61617
+activemq-orders.user=orders
+activemq-orders.password=63cx3wgGXVw2
+
+#/config/mq/orders-ou
+#activemq-orders.broker-url=ssl://b-5e2f0620-f15a-4d2b-8cac-3b1c6b000889-1.mq.us-east-1.amazonaws.com:61617
+#activemq-orders.user=orders
+#activemq-orders.password=63cx3wgGXVw2
+
+activemq.orders-created.topic=Rf.All.Order.OrderCreated.VirtualTopic
+spring.activemq.in-memory=false
+spring.jms.pub-sub-domain=true
+activemq.paid-orders.client_id=order-or-localserver_SERVER_PRUEBAS
+
+spring.cloud.compatibility-verifier.enabled=false
+spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
+
+#feign urls
+feign.client.url.loyaltyBcUrl=https://dev.loyalty.muydev.com/api/
+feign.client.url.orderBcUrl=https://dev.order-bc-query.muydev.com/api/
+feign.client.url.ssoUrl=https://sso.muydev.com/
+
+#feign config
+logging.level.com.robinfood.orderorlocalserver.network=DEBUG
+
+#logging config
+logging.level.root=INFO
+
+#config
+spring.main.allow-bean-definition-overriding=true
+
+feign.client.url.configurationsLocalserverBcUrl=https://stdevstable-configurations-localserver-bc.rf-dev.com/api/

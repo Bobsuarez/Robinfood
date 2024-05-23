@@ -1,0 +1,6 @@
+server.port=8089
+spring.application.name=local-printer-bc
+
+feign.client.url.orderorlocalservertemplateURL=https://sronmentecs-ou-stack-1-order-or-localserver.rf-dev.com/api/
+
+command.printer.port = 9100

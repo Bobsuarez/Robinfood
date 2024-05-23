@@ -1,0 +1,434 @@
+orderbc:
+  replicaCount: 2
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/order-bc
+    pullPolicy: Always
+    tag: 1.0.4
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+  nameOverride: steamstable-pos-order-bc-app
+  fullnameOverride: steamstable-pos-order-bc-chart
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: steamstable-pos-order-bc
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: NodePort
+    port: 8080
+  ingress:
+    enabled: true
+    className: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: alb-ingress
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '200'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '120'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+    - host: steamstable-pos-order-bc.rf-dev.com
+      paths:
+      - path: /
+        pathType: Prefix
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+  redis:
+    enabled: false
+  appEnv:
+  - name: APP
+    value: order-bc-pos
+  - name: MQ-SUFFIX
+    value: orders-ou
+  - name: JAVA_OPTS
+    value: -Xmx512m
+  filebeatImage: 853324821382.dkr.ecr.us-east-1.amazonaws.com/filebeat:7.16.3-arm64
+  filebeatEnv:
+  - name: SQUAD
+    value: cai
+  - name: ENVIRONMENT
+    value: dev
+  - name: APP
+    value: order-bc-pos
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    threshold: 5
+    metricName: nginx_ingress_controller_requests
+    prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80
+  nodeSelector:
+    kube/nodetype: ou-stack-2-arm
+  tolerations:
+  - key: dedicated
+    operator: Equal
+    value: app
+    effect: NoSchedule
+  affinity: {}
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+ordercreation:
+  replicaCount: 2
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/order-creation
+    pullPolicy: Always
+    tag: 1.1.1
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+  nameOverride: steamstable-pos-order-creation-app
+  fullnameOverride: steamstable-pos-order-creation-chart
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: steamstable-pos-order-creation
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: NodePort
+    port: 8080
+  ingress:
+    enabled: true
+    className: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: alb-ingress
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '200'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '120'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+    - host: steamstable-pos-order-creation.rf-dev.com
+      paths:
+      - path: /
+        pathType: Prefix
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+  redis:
+    enabled: false
+  appEnv:
+  - name: APP
+    value: order-creation-pos
+  - name: MQ-SUFFIX
+    value: orders-ou
+  - name: JAVA_OPTS
+    value: -Xmx512m
+  filebeatImage: 853324821382.dkr.ecr.us-east-1.amazonaws.com/filebeat:7.16.3-arm64
+  filebeatEnv:
+  - name: SQUAD
+    value: cai
+  - name: ENVIRONMENT
+    value: dev
+  - name: APP
+    value: order-creation-pos
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+  nodeSelector:
+    kube/nodetype: ou-stack-2-arm
+  tolerations:
+  - key: dedicated
+    operator: Equal
+    value: app
+    effect: NoSchedule
+  affinity: {}
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+taxesbc:
+  replicaCount: 1
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/taxes-bc
+    pullPolicy: Always
+    tag: 1.0.1
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+  nameOverride: steamstable-pos-taxes-bc-app
+  fullnameOverride: steamstable-pos-taxes-bc-chart
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: steamstable-pos-taxes-bc
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: NodePort
+    port: 8080
+  ingress:
+    enabled: true
+    className: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: alb-ingress
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '200'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '120'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+    - host: steamstable-pos-taxes-bc.rf-dev.com
+      paths:
+      - path: /
+        pathType: Prefix
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+  redis:
+    enabled: false
+  appEnv:
+  - name: APP
+    value: taxes-bc-pos
+  - name: JAVA_OPTS
+    value: -Xmx512m
+  filebeatImage: 853324821382.dkr.ecr.us-east-1.amazonaws.com/filebeat:7.16.3-arm64
+  filebeatEnv:
+  - name: SQUAD
+    value: cai
+  - name: ENVIRONMENT
+    value: dev
+  - name: APP
+    value: taxes-bc-pos
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    threshold: 10
+    metricName: nginx_ingress_controller_requests
+    prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80
+  nodeSelector:
+    kube/nodetype: ou-stack-2-arm
+  tolerations:
+  - key: dedicated
+    operator: Equal
+    value: app
+    effect: NoSchedule
+  affinity: {}
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+ordercreationqueries:
+  replicaCount: 1
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/order-creation-queries
+    pullPolicy: Always
+    tag: 1.1.5-SNAPSHOT
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+  nameOverride: steamstable-pos-order-creation-queries-app
+  fullnameOverride: steamstable-pos-order-creation-queries-chart
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: steamstable-pos-order-creation-queries
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: NodePort
+    port: 8080
+  ingress:
+    enabled: true
+    className: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: alb-ingress
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '200'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '120'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+    - host: steamstable-pos-order-creation-queries.rf-dev.com
+      paths:
+      - path: /
+        pathType: Prefix
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+  redis:
+    enabled: false
+  appEnv:
+  - name: APP
+    value: order-creation-queries-pos
+  - name: JAVA_OPTS
+    value: -Xmx512m
+  filebeatImage: 853324821382.dkr.ecr.us-east-1.amazonaws.com/filebeat:7.16.3-arm64
+  filebeatEnv:
+  - name: SQUAD
+    value: cai
+  - name: ENVIRONMENT
+    value: dev
+  - name: APP
+    value: order-creation-queries-pos
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    threshold: 5
+    metricName: nginx_ingress_controller_requests
+    prometheusUrl: http://prometheus-server.prometheus.svc.cluster.local:80
+  nodeSelector:
+    kube/nodetype: ou-stack-2-arm
+  tolerations:
+  - key: dedicated
+    operator: Equal
+    value: app
+    effect: NoSchedule
+  affinity: {}
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs
+orderorlocalserver:
+  replicaCount: 2
+  image:
+    repository: 853324821382.dkr.ecr.us-east-1.amazonaws.com/order-or-localserver
+    pullPolicy: Always
+    tag: 2.0.3
+  healthCheck:
+    enabled: false
+    path: /actuator/health
+  nameOverride: steamstable-pos-order-or-localserver-app
+  fullnameOverride: steamstable-pos-order-or-localserver-chart
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: steamstable-pos-order-or-localserver
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: NodePort
+    port: 8080
+  ingress:
+    enabled: true
+    className: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:853324821382:certificate/743a7866-5de6-4ef6-a013-e71707918c93
+      alb.ingress.kubernetes.io/group.name: alb-ingress
+      alb.ingress.kubernetes.io/subnets: subnet-036f1048c0e4f8b54,subnet-03df29f1eb8ea5459,subnet-0b8a01c30be810ce6
+      alb.ingress.kubernetes.io/security-groups: sg-06cbfe5f9cde3fc7c
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_200"}}'
+      alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '200'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '120'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+    - host: steamstable-pos-order-or-localserver.rf-dev.com
+      paths:
+      - path: /
+        pathType: Prefix
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+  redis:
+    enabled: false
+  appEnv:
+  - name: APP
+    value: order-or-localserver-pos
+  - name: MQ-SUFFIX
+    value: orders-ou
+  - name: JAVA_OPTS
+    value: -Xmx512m
+  filebeatImage: 853324821382.dkr.ecr.us-east-1.amazonaws.com/filebeat:7.16.3-arm64
+  filebeatEnv:
+  - name: SQUAD
+    value: cai
+  - name: ENVIRONMENT
+    value: dev
+  - name: APP
+    value: order-or-localserver-pos
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  nodeSelector:
+    kube/nodetype: ou-stack-2-arm
+  tolerations:
+  - key: dedicated
+    operator: Equal
+    value: app
+    effect: NoSchedule
+  affinity: {}
+  persistence:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 50Gi
+    storageClassName: efs-logs

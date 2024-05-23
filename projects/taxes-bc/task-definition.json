@@ -1,0 +1,41 @@
+{
+  "executionRoleArn": "arn:aws:iam::824759482132:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/taxes-bc-cluster",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "CODE_BRANCH"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "environment": [
+        {
+          "name": "VIRTUAL_HOST",
+          "value": "CODE_BRANCH.taxes-bc.muydev.com"
+        }
+      ],
+      "stopTimeout": 10,
+      "image": "824759482132.dkr.ecr.us-east-2.amazonaws.com/taxes-bc:IMAGE_TAG",
+      "startTimeout": 60,
+      "essential": true,
+      "name": "taxes-bc"
+    }
+  ],
+  "requiresCompatibilities": [
+      "FARGATE"
+  ],
+  "memory": "5120",
+  "taskRoleArn": "arn:aws:iam::824759482132:role/taxes-bc-role-dev",
+  "family": "taxes-bc",
+  "networkMode": "awsvpc",
+  "cpu": "2048"
+}
